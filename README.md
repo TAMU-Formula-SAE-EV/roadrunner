@@ -7,6 +7,6 @@ pip install -r requirements.txt
 
 Step 2: Run App.py
 ```bash
-python .\\app.py
+python .\app.py
 ```
 
