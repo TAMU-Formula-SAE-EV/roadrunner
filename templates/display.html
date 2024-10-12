@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+</head>
+<body>
+    <h1>Live Demo</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Value</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+        </tbody>
+    </table>
+
+    <script>
+        const socket = io();
+
+        socket.on('some_id', function (data) {
+            const tableBody = document.getElementById('data-table-body');
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${data.id}</td><td>${data.value}</td><td>${data.timestamp}</td>`;
+            tableBody.appendChild(row);
+        });
+    </script>
+</body>
+</html>
