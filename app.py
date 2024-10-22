@@ -6,7 +6,7 @@ import time
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 @app.route('/')
 def entry():
@@ -21,7 +21,8 @@ def add_entry():
     id_value = request.form.get('id')
     float_value = request.form.get('value')
     timestamp = int(time.time())
-    r.hset(id_value, mapping={'value': float_value, 'timestamp': timestamp})
+    r.rpush(f"{id_value}:values", float_value)
+    r.rpush(f"{id_value}:timestamps", timestamp)
     socketio.emit('some_id', {'id': id_value, 'value': float_value, 'timestamp': timestamp})
     return 'Entry added', 200
 
