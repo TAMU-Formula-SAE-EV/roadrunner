@@ -3,7 +3,7 @@ If you have not run the application before, you may need to setup redis (the bac
 2. Extract the files to C:/Program Files/redis
 3. Dev script should take care of starting the server
 
-To start the application use ./dev.sh. This script will install dependencies and then start the back and frontend applications. You can also use --quiet-front and --quiet-back to silence the log outputs of the services to make debugging a bit easier.
+To start the application use ./dev.sh. This script will install dependencies and then start the back and frontend applications. You can also use --quiet-front and --quiet-back to silence the log outputs of the services to make debugging a bit easier. The script assumes you have npm, python3 and redis set up prior to running the application.
 
 $ ./dev.sh
 
