@@ -34,15 +34,14 @@ export interface WidgetProps {
     config: WidgetConfig;
     //enable/disable the grid when we enter/exit the form
     setGridEnabled: (enabled: boolean) => void;
-    //call to delete self from layout
-    deleteSelf: () => void;
 };
 
 export interface FormProps<T extends WidgetConfig> {
-    //uniquely identifies every layout/widget item
-    i: string;
+
     //the current config
     config: T;
+    //
+    setConfigState: (t: T) => void;
 };
 
 export interface WidgetType<WidgetProps, FormProps, ConfigType> extends React.FC<WidgetProps> {

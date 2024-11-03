@@ -4,9 +4,7 @@ import "./styles.css";
 import Grid from "../grid/Grid";
 import Menu from "./menu/Menu";
 import { MENU_STATE } from "./menu/types";
-import { Widget, WidgetConfig } from "../widgets/types";
-import BasicDisplay from "../widgets/basic-display/BasicDisplay";
-import { useWidgets } from "../widgets/hooks/WidgetContext";
+import { WidgetConfig } from "../widgets/types";
 
 const ANIMATION_DURATION = 300;
 

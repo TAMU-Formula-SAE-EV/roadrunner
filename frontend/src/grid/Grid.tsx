@@ -6,7 +6,6 @@ import "react-grid-layout/css/styles.css";
 import { DEBUG } from "../utils/debug";
 import { getWidgetComponent } from "../widgets/utils/getWidgetComponent";
 import { useWidgets } from "../widgets/hooks/WidgetContext";
-import { config } from "process";
 import BasicDisplay from "../widgets/basic-display/BasicDisplay";
 
 interface GridProps {
@@ -15,7 +14,7 @@ interface GridProps {
 }
 
 const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
-  const {widgets, setWidgets, addWidget} = useWidgets();
+  const {widgets, setWidgets, addWidget, deleteWidget} = useWidgets();
   const [selectedWidget, setSelectedWidget] = useState<Widget | null>(null);
   const widgetID = useRef<number>(0);
   
@@ -46,24 +45,14 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
     }
   }, []);
 
-  const handleLayoutChange = (newLayout: Layout[]) => {
-    const updatedWidgets = widgets.map(widget => {
-      const layoutItem = newLayout.find(item => item.i === widget.i);
-      return layoutItem
-        ? { ...widget, x: layoutItem.x, y: layoutItem.y, w: layoutItem.w, h: layoutItem.h }
-        : widget;
-    });
-
-    setWidgets(updatedWidgets);
-  };
-
   const handleDrop = (widget: Widget) => {
     const droppedWidget = {
       ...widget,
       w: incomingWidget ? incomingWidget.h : 1,
       h: incomingWidget ? incomingWidget.w : 1, 
       config: incomingWidget || BasicDisplay.defaultConfig,
-      i: String(widgetID.current)
+      i: String(widgetID.current), 
+      resizeHandles: []
     };
     widgetID.current += 1;
     addWidget(droppedWidget);
@@ -97,14 +86,22 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
     setSelectedWidget(newSelectedWidget); 
   };
 
-  const deleteWidget = (i: string) => {
-    console.log("deleting widget: ", i);
-    console.log("after", widgets.filter((w) => {return w.i !== i}));
-    setWidgets(widgets.filter((w) => {return w.i !== i}));
+  const handleLayoutChange = (newLayout: Layout[]) => {
+    const updatedWidgets = widgets.map(widget => {
+      const layoutItem = newLayout.find(item => item.i === widget.i);
+      return layoutItem
+        ? { ...widget, x: layoutItem.x, y: layoutItem.y, w: layoutItem.w, h: layoutItem.h }
+        : widget;
+    });
+
+    setWidgets(updatedWidgets);
   };
+
 
   var layout: Widget[] = widgets;
   if (!enabled) layout = layout.map((w) => {return {...w, isDraggable: false}});
+
+  console.log(enabled);
 
   return (
     <div ref={gridContainerRef} className={"grid-container " + (DEBUG ? "debug " : "")}>
@@ -118,19 +115,20 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
           isDraggable={enabled}
           isResizable={enabled}
           isDroppable={enabled}
+          onLayoutChange={handleLayoutChange}
           compactType={null}
           isBounded={true}
-          onLayoutChange={handleLayoutChange}
           onDrag={() => setBackgroundBlur(true)}
           onDragStop={() => {setBackgroundBlur(false); setSelectedWidget(null)}}
           onResizeStart={() => setBackgroundBlur(true)}
           onResizeStop={() => setBackgroundBlur(false)}
           onDrop={(_, widget: Widget) => {setBackgroundBlur(false); handleDrop(widget);}}
           style={{ width: "100%", height: "100%" }}
+          
         >
           {widgets.map((widget) => (
-            <div key={widget.i} onClick={() => {handleSelectedWidgetChange(widget); setBackgroundBlur(false)}}>
-              {getWidgetComponent(widget.config, widget.i, widget.i === selectedWidget?.i, setEnabled, () => deleteWidget(widget.i))}
+            <div key={widget.i} onClick={() => { handleSelectedWidgetChange(widget); setBackgroundBlur(false); }}>
+              {getWidgetComponent(widget.config, widget.i, widget.i === selectedWidget?.i, setEnabled)}
             </div>
           ))}
         </GridLayout>

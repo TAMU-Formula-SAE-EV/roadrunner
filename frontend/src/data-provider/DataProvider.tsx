@@ -43,4 +43,3 @@ export const useData = () => {
 };
 
 export default DataProvider;
-

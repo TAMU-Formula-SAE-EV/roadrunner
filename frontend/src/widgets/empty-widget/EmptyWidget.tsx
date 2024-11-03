@@ -8,8 +8,8 @@ interface EmptyWidgetProps extends WidgetProps {
     config: EmptyWidgetConfig;
 }
 
-const EmptyWidget: WidgetType<EmptyWidgetProps, FormProps<EmptyWidgetConfig>, EmptyWidgetConfig> = ({selected, i, config, setGridEnabled, deleteSelf}) => {
-    return <WidgetWrapper selected={selected} i={i} config={config} setGridEnabled={setGridEnabled} Form={EmptyWidget.Form} deleteWidget={deleteSelf}>Empty Widget!</WidgetWrapper>;
+const EmptyWidget: WidgetType<EmptyWidgetProps, FormProps<EmptyWidgetConfig>, EmptyWidgetConfig> = ({selected, i, config, setGridEnabled}) => {
+    return <WidgetWrapper selected={selected} i={i} config={config} setGridEnabled={setGridEnabled} Form={EmptyWidget.Form}>Empty Widget!</WidgetWrapper>;
 }; 
 
 const EmptyWidgetForm: React.FC<FormProps<EmptyWidgetConfig>> = ({}) => {

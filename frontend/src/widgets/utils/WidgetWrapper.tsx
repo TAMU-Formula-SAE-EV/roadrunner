@@ -10,7 +10,6 @@ interface WidgetWrapperProps<T extends WidgetConfig> {
     config: T;
     Form: React.FC<FormProps<T>>;
     setGridEnabled: (enabled: boolean) => void;
-    deleteWidget: () => void;
     children?: React.ReactNode;
 }
 
@@ -20,14 +19,20 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
     config,
     Form,
     setGridEnabled, 
-    deleteWidget,
     children
 }: WidgetWrapperProps<ConfigType>) => {
     const [formActive, setFormActive] = useState<boolean>(false);
+    const [configState, setConfigState] = useState<ConfigType>(config);
 
     useEffect(() => {
         if (!formActive) setGridEnabled(true);
-    }, [formActive])
+    }, [formActive]); 
+
+    useEffect(() => {
+        return () => {
+            setGridEnabled(true);
+        };
+    }, [])
 
     const handleEditButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -35,14 +40,16 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
         setFormActive(true);
     };
 
-    const {setWidgets, widgets} = useWidgets();
+    const {deleteWidget, editConfig} = useWidgets();
 
     const renderModalWithOverlay = () => (
         <>
             <div className="fullscreen-overlay"></div>
             <div className="modal-content">
                 <button className="close-button" onClick={() => setFormActive(false)}>Close</button>
-                <Form config={config} i={i} />
+                <Form config={configState} setConfigState={setConfigState} />
+                <button onClick={() => editConfig(i, configState)}>Save</button>
+                <button onClick={() => deleteWidget(i)}>delete</button>
             </div>
         </>
     );
@@ -55,7 +62,6 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
                 </>
             )}
             {children}
-            {/* Render modal with overlay if form is active */}
             {formActive && ReactDOM.createPortal(renderModalWithOverlay(), document.body)}
         </div>
     );

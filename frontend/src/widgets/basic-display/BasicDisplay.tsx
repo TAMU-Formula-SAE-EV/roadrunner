@@ -18,27 +18,26 @@ interface BasicDisplayProps extends WidgetProps {
 }
 
 //component which defines the widget (and its behavior)
-const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ selected, i, config, setGridEnabled, deleteSelf }) => {
+const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ selected, i, config, setGridEnabled }) => {
     const { data } = useData();
     const value = data[config.dataKey] ? data[config.dataKey].value : null;
 
     //make sure to use the widget wrapper!
-    return <WidgetWrapper selected={selected} config={config} Form={BasicDisplay.Form} i={i} setGridEnabled={setGridEnabled} deleteWidget={deleteSelf}>
+    return <WidgetWrapper selected={selected} config={config} Form={BasicDisplay.Form} i={i} setGridEnabled={setGridEnabled}>
         {config.dataKey}: {value}
     </WidgetWrapper>;
 };
 
 
 //defines form which edits the configurable settings
-const BasicDisplayForm: React.FC<FormProps<BasicDisplayConfig>> = ({i, config}) => {
+const BasicDisplayForm: React.FC<FormProps<BasicDisplayConfig>> = ({setConfigState, config}) => {
 
-    const {editConfig} = useWidgets();
 
     // Handle changes to the selected datastream type
     const handleDataKeyChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const newDataKey = event.target.value as DATASTREAM;
 
-        editConfig(i, { ...config, dataKey: newDataKey } as BasicDisplayConfig);
+        setConfigState({ ...config, dataKey: newDataKey } as BasicDisplayConfig);
     };
 
     return (

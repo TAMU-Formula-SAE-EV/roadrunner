@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Widget, WidgetConfig } from "../types";
 
 interface DataProviderProps {
@@ -18,27 +18,27 @@ export const WidgetLayoutContext = createContext<WidgetLayoutContextType>( {widg
 const WidgetProvider: React.FC<DataProviderProps> = ({ children }) => {
     const [widgets, setWidgets] = useState<Widget[]>([]);
 
+    /*Is this whole deletedWidgetsID thing weird??? Yes, it is. I don't know
+    why this works, but it does. Directly modifying the widgets array to delete 
+    a widget does not. This has something to do with the grid library keeping an
+    internal state, which makes it hard to directly delete it. */
+    const [deletedWidgetIDs, setDeletedWidgetIDs] = useState<String[]>([]); 
+    useEffect(() => {
+        setWidgets(widgets.filter((w) => { return !deletedWidgetIDs.includes(w.i) }));
+    }, [deletedWidgetIDs]);
+
     const editConfig = <T extends WidgetConfig>(i: string, newConfig: T) => {
         setWidgets(widgets.map((widget) => {if (widget.i === i) return {...widget, config: newConfig}; else return widget}));
     };
     
     const deleteWidget = (i: string) => {
-        console.log(
-            "deleting", i
-        );
-
-        console.log(
-            "filtered", widgets.filter((widget) => { return widget.i != i})
-        )
-        //setWidgets(widgets.filter((widget) => { return widget.i != i}));
-        setWidgets([]); 
+        setDeletedWidgetIDs([...deletedWidgetIDs, i]);
     };
     
     const addWidget = (newWidget: Widget) => {
         setWidgets([...widgets, {...newWidget}]);
     }
     
-
     return <WidgetLayoutContext.Provider value={ {widgets, setWidgets, editConfig, deleteWidget, addWidget} } >{children}</WidgetLayoutContext.Provider>;
 };
 
