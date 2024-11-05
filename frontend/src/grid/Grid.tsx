@@ -60,6 +60,8 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
 
   const handleSelectedWidgetChange = (newSelectedWidget: Widget | null ): void => {
 
+    console.log("handle selected widget called");
+
     if (newSelectedWidget !== null) {
 
       const updatedWidget: Widget = {
@@ -101,7 +103,8 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
   var layout: Widget[] = widgets;
   if (!enabled) layout = layout.map((w) => {return {...w, isDraggable: false}});
 
-  console.log(enabled);
+  console.log("widgets: ", widgets);
+  console.log("selected Widget", selectedWidget);
 
   return (
     <div ref={gridContainerRef} className={"grid-container " + (DEBUG ? "debug " : "")}>

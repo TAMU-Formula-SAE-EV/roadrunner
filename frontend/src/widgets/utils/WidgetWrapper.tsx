@@ -32,13 +32,24 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
         return () => {
             setGridEnabled(true);
         };
-    }, [])
+    }, []); 
+
+    useEffect(() => {
+        console.log('config state', configState);
+    }, [configState]);
 
     const handleEditButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         setGridEnabled(false);
         setFormActive(true);
     };
+
+     const handleSaveButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        setGridEnabled(true);
+        setFormActive(false); 
+        editConfig(i, configState)
+     }
 
     const {deleteWidget, editConfig} = useWidgets();
 
@@ -48,7 +59,7 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
             <div className="modal-content">
                 <button className="close-button" onClick={() => setFormActive(false)}>Close</button>
                 <Form config={configState} setConfigState={setConfigState} />
-                <button onClick={() => editConfig(i, configState)}>Save</button>
+                <button onClick={handleSaveButtonClick}>Save</button>
                 <button onClick={() => deleteWidget(i)}>delete</button>
             </div>
         </>
