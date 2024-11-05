@@ -9,6 +9,8 @@
 
 .background-blur {
     background-color: rgba(0, 0, 0, 0.393);
+    backdrop-filter: blur(10px); /* Apply the blur effect */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
 }
 
 .dashboard-contents {
@@ -43,4 +45,8 @@
 .background-blur .grid-container {
     z-index: 10;
     background-color:#ffffff;
+}
+
+.background-blur.in-menu {
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease; /* Add transition for background color and filter */
 }

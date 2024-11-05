@@ -19,7 +19,6 @@ interface RecentValuesProps extends WidgetProps {
 const RecentValues: WidgetType<RecentValuesProps, FormProps<RecentValuesConfig>, RecentValuesConfig> = ({ selected, i, config, setGridEnabled }) => {
     const { timeSeriesData } = useData(); // Access the timeSeriesData from the context
 
-    // Type assertion with a fallback to undefined for missing data
     const entries = timeSeriesData[config.dataKey] ? timeSeriesData[config.dataKey].values.slice(-5) : [];
 
     return (

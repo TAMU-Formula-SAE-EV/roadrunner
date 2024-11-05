@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import "../styles.css";
 import { FormProps, WidgetConfig } from "../types";
 import { useWidgets } from "../hooks/WidgetContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisVertical, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface WidgetWrapperProps<T extends WidgetConfig> {
     selected: boolean;
@@ -57,8 +59,13 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
         <>
             <div className="fullscreen-overlay"></div>
             <div className="modal-content">
-                <button className="close-button" onClick={() => setFormActive(false)}>Close</button>
+                <button className="generic-button close-button" onClick={() => setFormActive(false)}>
+                    <FontAwesomeIcon icon={faTimes} />
+                </button>
+                <br />
                 <Form config={configState} setConfigState={setConfigState} />
+                <br />
+                <br />
                 <button onClick={handleSaveButtonClick}>Save</button>
                 <button onClick={() => deleteWidget(i)}>delete</button>
             </div>
@@ -69,7 +76,9 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
         <div className="widget-wrapper-container">
             {selected && (
                 <>
-                    <button onClick={handleEditButtonClick} >edit!</button>
+                    <button className="generic-button edit-button" onClick={handleEditButtonClick} >
+                        <FontAwesomeIcon icon={faEllipsisVertical} />
+                    </button>
                 </>
             )}
             {children}
