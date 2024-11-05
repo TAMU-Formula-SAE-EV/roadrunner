@@ -12,9 +12,14 @@ If you're not on windows, the basic steps to run the application are as follows:
 2. Download the python + node dependencies 
 3. Run the back and front end applications
 
+To simulate data streaming into the application, you have two options: 
+1. Manual entry: Start the application, go to localhost:5000 and manually enter your data
+2. run python3 backend/simulate_data.py in another terminal. It will put transmit a sign wave to as the speed 
+
 Making a new widget type: 
 1. use "empty widget" and "basic widget" as inspo
 2. Make a new folder in frontend/src/widgets
 3. Make the widget component in the folder (make sure to use the WidgetWrapper component)
 4. Make a new enum type for your widget in frontend/src/widgets/manifest.tsx
-5. Add the widget to the menu layout (see frontend/src/dashboard/menu/manifest.tsx)
+5. Map your widget enum type to a component in src/widgets/utils/getWidgetComponent.tsx
+6. Add the widget to the menu layout (see frontend/src/dashboard/menu/types.tsx)
