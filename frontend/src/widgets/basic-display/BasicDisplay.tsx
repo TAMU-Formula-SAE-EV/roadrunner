@@ -4,7 +4,6 @@ import { WidgetProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from
 import WidgetWrapper from "../utils/WidgetWrapper";
 import { WIDGET_TYPE } from "../types";
 import { DATASTREAM, datastreams } from "../../shared-types";
-import { useWidgets } from "../hooks/WidgetContext";
 
 
 // define all the configurable options unique to this widget type

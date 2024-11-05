@@ -1,5 +1,6 @@
 import BasicDisplay, { BasicDisplayConfig } from "../../widgets/basic-display/BasicDisplay";
 import EmptyWidget from "../../widgets/empty-widget/EmptyWidget";
+import MockLineGraph from "../../widgets/recent-values/RecentValues";
 import { RESIZE_HANDLES, WidgetConfig } from "../../widgets/types";
 import { WIDGET_TYPE } from "../../widgets/types";
 
@@ -20,7 +21,8 @@ export const DEFAULT_MENU_CONTENTS: MenuContents<any> = {
 export const GRAPHS_CONTENTS: MenuContents<any> = {
     contents: [
         {widget: BasicDisplay.defaultConfig},
-        {widget: EmptyWidget.defaultConfig}
+        {widget: EmptyWidget.defaultConfig}, 
+        {widget: MockLineGraph.defaultConfig}
     ]
 };
 

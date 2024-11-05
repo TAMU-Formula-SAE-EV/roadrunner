@@ -1,7 +1,7 @@
 import { Layout } from "react-grid-layout";
 
 //add new enum with each widget type
-export enum WIDGET_TYPE {EMPTY, BASIC_DISPLAY};
+export enum WIDGET_TYPE {EMPTY, BASIC_DISPLAY, RECENT_VALUES};
 
 export type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 export const RESIZE_HANDLES: ResizeHandle[] = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
