@@ -1,5 +1,6 @@
+import pandas as pd
 from flask import Flask, render_template, request
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import redis
 import time
 
@@ -30,5 +31,21 @@ def add_entry():
 def handle_connect():
     print('Connected')
 
+def simulation():
+    df = pd.read_csv("short.csv", header=13)
+    df = df.drop([0, 1])
+    print("Simulation started")
+    for _, row in df.iterrows():
+        timestamp = row[0]
+        for i in range(1, len(row)):
+            column_name = df.columns[i].replace(" ", "")
+            r.rpush(f"{column_name}:values", row[i])
+            r.rpush(f"{column_name}:timestamps", timestamp)
+            socketio.emit('some_id', {'id': column_name, 'value': row[i], 'timestamp': timestamp})
+            print("Entry added")
+        socketio.sleep(.1)
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.start_background_task(simulation)
+    print("Starting")
+    socketio.run(app, debug=True, use_reloader=False)
