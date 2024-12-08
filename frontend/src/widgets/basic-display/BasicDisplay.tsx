@@ -17,12 +17,12 @@ interface BasicDisplayProps extends WidgetProps {
 }
 
 //component which defines the widget (and its behavior)
-const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ selected, i, config, setGridEnabled }) => {
+const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ i, config }) => {
     const { data } = useData();
     const value = data[config.dataKey] ? data[config.dataKey].value : null;
 
     //make sure to use the widget wrapper!
-    return <WidgetWrapper selected={selected} config={config} Form={BasicDisplay.Form} i={i} setGridEnabled={setGridEnabled}>
+    return <WidgetWrapper config={config} Form={BasicDisplay.Form} i={i}>
         {config.dataKey}: {value}
     </WidgetWrapper>;
 };

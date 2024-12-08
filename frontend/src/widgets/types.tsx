@@ -6,7 +6,13 @@ export enum WIDGET_TYPE {EMPTY, BASIC_DISPLAY, RECENT_VALUES};
 export type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 export const RESIZE_HANDLES: ResizeHandle[] = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
-export interface Widget extends Layout {
+type GridItem = {
+    id: number;
+    x: number;
+    y: number;
+}
+
+export interface Widget extends GridItem {
     config: WidgetConfig;
 }
 
@@ -27,13 +33,9 @@ export interface WidgetConfig {
 
 export interface WidgetProps {
     //uniquely identifies the widget (should correspond to Widget.i)
-    i: string;
-    //whether or not the widget is selected
-    selected: boolean;
+    i: number;
     //the widget's config
     config: WidgetConfig;
-    //enable/disable the grid when we enter/exit the form
-    setGridEnabled: (enabled: boolean) => void;
 };
 
 export interface FormProps<T extends WidgetConfig> {

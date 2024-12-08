@@ -2,39 +2,29 @@ import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import "../styles.css";
 import { FormProps, WidgetConfig } from "../types";
-import { useWidgets } from "../hooks/WidgetContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface WidgetWrapperProps<T extends WidgetConfig> {
-    selected: boolean;
-    i : string;
+    i : number;
     config: T;
     Form: React.FC<FormProps<T>>;
-    setGridEnabled: (enabled: boolean) => void;
     children?: React.ReactNode;
 }
 
 const WidgetWrapper = <ConfigType extends WidgetConfig>({
-    selected,
     i,
     config,
     Form,
-    setGridEnabled, 
     children
 }: WidgetWrapperProps<ConfigType>) => {
     const [formActive, setFormActive] = useState<boolean>(false);
     const [configState, setConfigState] = useState<ConfigType>(config);
 
-    useEffect(() => {
-        if (!formActive) setGridEnabled(true);
-    }, [formActive]); 
 
-    useEffect(() => {
-        return () => {
-            setGridEnabled(true);
-        };
-    }, []); 
+    //TODO
+    const selected = false;
+
 
     useEffect(() => {
         console.log('config state', configState);
@@ -42,18 +32,15 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
 
     const handleEditButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        setGridEnabled(false);
         setFormActive(true);
     };
 
      const handleSaveButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        setGridEnabled(true);
         setFormActive(false); 
-        editConfig(i, configState)
+        //editConfig(i, configState)
      }
 
-    const {deleteWidget, editConfig} = useWidgets();
 
     const renderModalWithOverlay = () => (
         <>
@@ -67,7 +54,7 @@ const WidgetWrapper = <ConfigType extends WidgetConfig>({
                 <br />
                 <br />
                 <button onClick={handleSaveButtonClick}>Save</button>
-                <button onClick={() => deleteWidget(i)}>delete</button>
+                <button onClick={() => {/*deleteWidget(i)*/}}>delete</button>
             </div>
         </>
     );
