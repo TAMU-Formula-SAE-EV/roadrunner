@@ -1,25 +1,37 @@
 
 import { WidgetConfig } from "../types";
-import { useState } from "react";
+import {useDrag} from "react-dnd";
 
 interface WidgetSpawnerProps {
-    widgetPreset: WidgetConfig;
-    handleWidgetSpawn: (widgetPreset: WidgetConfig) => void;
+    config: WidgetConfig;
+    onDragStart?: () => void;
     children: React.ReactNode;
 }
 
-const WidgetSpawner: React.FC<WidgetSpawnerProps> = ({ widgetPreset, handleWidgetSpawn, children }) => {
-    //hide children while dragging
-    const [isDragging, setIsDragging] = useState<boolean>(false);
+const WidgetSpawner: React.FC<WidgetSpawnerProps> = ({ config, onDragStart, children }) => {
+    
+    const [{ isDragging }, drag] = useDrag({
+        type: "NEW_WIDGET",
+        item: () => {
+          return { 
+            w: config.w, 
+            h: config.h, 
+            config, 
+            type: "NEW_WIDGET"
+          };
+        },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+          }),
+      });
+    
     
     return (
         <div
             className="widget-spawner"
             draggable={true}
-            onDragStart={() => {
-                setIsDragging(true)
-                handleWidgetSpawn(widgetPreset)}}
-            onDragEnd={() => setIsDragging(false)}
+            ref={drag}
+            onDragStart={onDragStart}
         >
             {!isDragging && children}
         </div>

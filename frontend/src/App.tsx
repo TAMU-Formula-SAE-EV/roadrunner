@@ -5,13 +5,16 @@ import Dashboard from './dashboard/Dashboard';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DataProvider from './data-provider/DataProvider';
+import WidgetLayoutProvider from './grid/GridContext';
 
 
 function App() {
   return (
     <DndProvider backend={HTML5Backend}>
       <DataProvider>
-          <Dashboard />
+          <WidgetLayoutProvider>
+            <Dashboard />
+          </WidgetLayoutProvider>
       </DataProvider>
     </DndProvider>
   );

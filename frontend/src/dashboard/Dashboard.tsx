@@ -28,18 +28,13 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   }, [inMenu]);
 
-  const handleWidgetSpawn = (widgetPreset: WidgetConfig) => {
-    setInMenu(false);
-    setIncomingWidget(widgetPreset);
-  };
-
   return (
     <div className={"dashboard-container " + (inMenu ? "in-menu " : "") + (backgroundBlur ? "background-blur" : "")}>
         {
-            <Menu state={menuState} setMenuState={setMenuState} handleWidgetSpawn={handleWidgetSpawn} />
+            <Menu state={menuState} setMenuState={setMenuState} onWidgetSpawn={() => setInMenu(false)} />
         }
       <div className="dashboard-contents" onClick={() => (inMenu ? setInMenu(false) : null)}>
-        <Grid incomingWidget={incomingWidget} setBackgroundBlur={setBackgroundBlur} />
+        <Grid setBackgroundBlur={setBackgroundBlur} />
         <NavBar changeMenuState={() => setInMenu(true)} />
       </div>
     </div>

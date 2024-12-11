@@ -6,13 +6,17 @@ export enum WIDGET_TYPE {EMPTY, BASIC_DISPLAY, RECENT_VALUES};
 export type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 export const RESIZE_HANDLES: ResizeHandle[] = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
-type GridItem = {
-    id: number;
+export type GridItem = {
+    //coordinates
     x: number;
     y: number;
+    //dimensions
+    w: number;
+    h: number;
 }
 
 export interface Widget extends GridItem {
+    id: number;
     config: WidgetConfig;
 }
 

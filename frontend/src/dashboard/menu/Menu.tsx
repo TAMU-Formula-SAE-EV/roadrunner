@@ -7,10 +7,10 @@ import { WidgetConfig } from "../../widgets/types";
 interface MenuProps {
     state: MENU_STATE;
     setMenuState: (state: MENU_STATE) => void;
-    handleWidgetSpawn: (widgetPreset: WidgetConfig) => void;  
+    onWidgetSpawn: () => void;  
 }
 
-const Menu: React.FC<MenuProps> = ({state, setMenuState, handleWidgetSpawn}) => {
+const Menu: React.FC<MenuProps> = ({state, setMenuState, onWidgetSpawn}) => {
 
     const menuContents: MenuContents<any> = MENU_STATE_MAP[state];
 
@@ -18,7 +18,7 @@ const Menu: React.FC<MenuProps> = ({state, setMenuState, handleWidgetSpawn}) => 
         <div className="menu-container">
             {menuContents.contents.map((entry: MenuEntry<any>, index) => 
                 <div key={index}>
-                    {renderMenuEntry(entry, setMenuState, handleWidgetSpawn)}
+                    {renderMenuEntry(entry, setMenuState, onWidgetSpawn)}
                 </div>
             )}
         </div>
