@@ -17,14 +17,11 @@ interface BasicDisplayProps extends WidgetProps {
 }
 
 //component which defines the widget (and its behavior)
-const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ i, config }) => {
+const BasicDisplayComponent: React.FC<BasicDisplayProps> = ({ i, config }) => {
     const { data } = useData();
     const value = data[config.dataKey] ? data[config.dataKey].value : null;
 
-    //make sure to use the widget wrapper!
-    return <WidgetWrapper config={config} Form={BasicDisplay.Form} i={i}>
-        {config.dataKey}: {value}
-    </WidgetWrapper>;
+    return <>{config.dataKey}: {value}</>;
 };
 
 
@@ -56,10 +53,9 @@ const BasicDisplayForm: React.FC<FormProps<BasicDisplayConfig>> = ({setConfigSta
         </div>
     );
 };
-BasicDisplay.Form = BasicDisplayForm;
 
 //define the default configuration
-BasicDisplay.defaultConfig = {
+const defaultConfig = {
     title: "Basic Display",
     w: 1, 
     h: 1,
@@ -67,5 +63,11 @@ BasicDisplay.defaultConfig = {
     type: WIDGET_TYPE.BASIC_DISPLAY,
     dataKey: "speed"
 } as BasicDisplayConfig;
+
+const BasicDisplay: WidgetType<BasicDisplayProps, BasicDisplayConfig> = {
+    Component: BasicDisplayComponent,
+    Form: BasicDisplayForm,
+    defaultConfig
+}
 
 export default BasicDisplay;

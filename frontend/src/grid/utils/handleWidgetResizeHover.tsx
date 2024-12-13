@@ -26,7 +26,7 @@ const handleWidgetResizeHover = (hoverPosition: {x: number, y: number}, layout: 
 
         }
 
-        if (handle === 'e' || handle === 'se' || handle === 'sw') {
+        if (handle === 'e' || handle === 'se' || handle === 'ne') {
             const displacement = (hoverPosition.x - originalPosition.x);
             
             if (displacement > 0) {

@@ -50,7 +50,8 @@ export interface FormProps<T extends WidgetConfig> {
     setConfigState: (t: T) => void;
 };
 
-export interface WidgetType<WidgetProps, FormProps, ConfigType> extends React.FC<WidgetProps> {
-    Form: React.FC<FormProps>;
+export interface WidgetType<WidgetProps, ConfigType extends WidgetConfig> {
+    Component: React.FC<WidgetProps>;
+    Form: React.FC<FormProps<ConfigType>>;
     defaultConfig: ConfigType;
 }

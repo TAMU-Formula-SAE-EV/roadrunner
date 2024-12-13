@@ -1,5 +1,5 @@
-import { FormProps, WIDGET_TYPE, WidgetConfig, WidgetProps, WidgetType } from "../types";
-import WidgetWrapper from "../utils/WidgetWrapper";
+import React from "react";
+import { FormProps, RESIZE_HANDLES, WIDGET_TYPE, WidgetConfig, WidgetProps, WidgetType } from "../types";
 
 
 export interface EmptyWidgetConfig extends WidgetConfig {}
@@ -8,21 +8,26 @@ interface EmptyWidgetProps extends WidgetProps {
     config: EmptyWidgetConfig;
 }
 
-const EmptyWidget: WidgetType<EmptyWidgetProps, FormProps<EmptyWidgetConfig>, EmptyWidgetConfig> = ({ i, config, }) => {
-    return <WidgetWrapper i={i} config={config} Form={EmptyWidget.Form}>Empty Widget!</WidgetWrapper>;
+const EmptyWidgetComponent: React.FC<EmptyWidgetProps> = ({ i, config, }) => {
+    return <>Empty Widget!</>;
 }; 
 
 const EmptyWidgetForm: React.FC<FormProps<EmptyWidgetConfig>> = ({}) => {
     return <>Empty form!</>
 }
-EmptyWidget.Form = EmptyWidgetForm;
 
-EmptyWidget.defaultConfig = {
+const defaultConfig = {
     title: "empty widget!", 
     w: 2, 
     h: 2, 
-    availableHandles: ['n', 's', 'e', 'w'], 
+    availableHandles: RESIZE_HANDLES, 
     type: WIDGET_TYPE.EMPTY
+}
+
+const EmptyWidget: WidgetType<EmptyWidgetProps, EmptyWidgetConfig> = {
+    Component: EmptyWidgetComponent, 
+    Form: EmptyWidgetForm,
+    defaultConfig
 }
 
 export default EmptyWidget;
