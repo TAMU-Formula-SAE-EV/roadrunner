@@ -1,5 +1,5 @@
 import { DropTargetMonitor } from "react-dnd";
-import { WidgetConfig } from "../widgets/types";
+import { GridItem, Widget, WidgetConfig } from "../widgets/types";
 
 export const GRID_COLUMNS = 16;
 export const GRID_ROWS = 8;
@@ -11,3 +11,10 @@ export type Monitor = DropTargetMonitor<{
     type?: string;
     config: WidgetConfig;
 }, unknown>
+
+export type GridState = {
+  layout: Widget[];
+  draggedWidget: Widget | null;
+  resizedWidget: Widget | null;
+  preview: GridItem;
+}

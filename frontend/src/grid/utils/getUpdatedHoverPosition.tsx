@@ -1,7 +1,7 @@
 import { DropTargetMonitor } from "react-dnd";
 import { GRID_COLUMNS, GRID_ROWS, Monitor } from "../consts";
 
-const getUpdatedWidgetPosition: (monitor: Monitor) => {x: number, y:number} | undefined = (monitor) => {
+const getUpdatedHoverPosition: (monitor: Monitor) => {x: number, y:number} | undefined = (monitor) => {
     const gridElement = document.querySelector(".grid-container");
     if (!gridElement) return;
     
@@ -18,4 +18,4 @@ const getUpdatedWidgetPosition: (monitor: Monitor) => {x: number, y:number} | un
     return { x, y }
 };
 
-export default getUpdatedWidgetPosition;
+export default getUpdatedHoverPosition;

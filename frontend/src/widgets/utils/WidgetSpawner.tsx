@@ -9,6 +9,9 @@ interface WidgetSpawnerProps {
 }
 
 const WidgetSpawner: React.FC<WidgetSpawnerProps> = ({ config, onDragStart, children }) => {
+
+
+    
     
     const [{ isDragging }, drag] = useDrag({
         type: "NEW_WIDGET",
