@@ -109,20 +109,21 @@ export const Widget: React.FC<WidgetProps> = ({
         ))}
         
 
-        { selected &&
-          <button 
-            className="generic-button edit-button" 
-            onClick={handleEditClick} 
-            style={{position: "absolute", right: 0, top: 0}}
-          >
-            <FontAwesomeIcon icon={faEllipsisVertical}/>
-          </button>
-        }
+      { selected &&
+        <button 
+          className="generic-button edit-button" 
+          onClick={handleEditClick} 
+          style={{position: "absolute", right: 0, top: 0}}
+        >
+          <FontAwesomeIcon icon={faEllipsisVertical}/>
+        </button>
+      }
 
-        {/* If form is active, render */}
-        {formActive && 
-          renderForm()
-        }
+      {/* If form is active, render */}
+      {formActive && 
+        renderForm()
+      }
+    
     </div>
   );
 };
