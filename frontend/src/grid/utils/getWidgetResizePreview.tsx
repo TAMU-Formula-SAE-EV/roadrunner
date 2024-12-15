@@ -1,7 +1,7 @@
 import { GridItem, ResizeHandle, Widget } from "../../widgets/types";
 import { GridState } from "../consts";
 
-const handleWidgetResizeHover = (hoverPosition: {x: number, y: number}, layout: Widget[], preview: GridItem, handle: ResizeHandle, originalPosition: GridItem) :
+const getWidgetResizePreview = (hoverPosition: {x: number, y: number}, layout: Widget[], preview: GridItem, handle: ResizeHandle, originalPosition: GridItem) :
     {layout: Widget[], preview: GridItem} => {
 
         let updatedPreview = preview;
@@ -44,8 +44,7 @@ const handleWidgetResizeHover = (hoverPosition: {x: number, y: number}, layout: 
             }
         }
         
-        //TODO: Handle collisions
         return {layout, preview: updatedPreview};
     }
 
-export default handleWidgetResizeHover;
+export default getWidgetResizePreview;

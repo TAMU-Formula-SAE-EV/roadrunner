@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { GridItem, Widget, WidgetConfig } from "../widgets/types";
 
+
+/*
+    Manages global state of widget grid/layout
+*/
+
 interface WidgetLayoutProps {
     children: React.ReactNode;
 };
@@ -12,6 +17,7 @@ interface WidgetLayoutType {
     deleteWidget: (id: number) => void;
     addWidget: (gridItem: GridItem, config: WidgetConfig) => void;
     moveWidget: (id: number, newPosition: {x: number, y: number}) => void;
+    getNewId: () => number;
 };
 
 export const WidgetLayoutContext = createContext<WidgetLayoutType>(
@@ -21,7 +27,8 @@ export const WidgetLayoutContext = createContext<WidgetLayoutType>(
         editConfig: () => {},
         deleteWidget: () => {}, 
         addWidget: () => {}, 
-        moveWidget: () => {}
+        moveWidget: () => {}, 
+        getNewId: () => -1
     });
 
 const WidgetLayoutProvider: React.FC<WidgetLayoutProps> = ({children}) => {
@@ -29,6 +36,11 @@ const WidgetLayoutProvider: React.FC<WidgetLayoutProps> = ({children}) => {
     const nextWidgetId = useRef<number>(0);
     const [layout, setLayout] = useState<Widget[]>([]);
 
+
+    /*
+        Need to constantly load the next id bc we may 
+        load a template with overlapping ids
+    */
     useEffect(() => {
         let highestWidgetId = -1;
         layout.forEach((w: Widget) => {
@@ -54,7 +66,11 @@ const WidgetLayoutProvider: React.FC<WidgetLayoutProps> = ({children}) => {
         setLayout(layout.map((widget: Widget) => {if (widget.id === id) return {...widget, ...newPosition}; else return widget;}));
     };
 
-    return <WidgetLayoutContext.Provider value={{layout, setLayout, editConfig, deleteWidget, addWidget, moveWidget}}>{children}</WidgetLayoutContext.Provider>;
+    const getNewId = () => {
+        return nextWidgetId.current++;
+    };
+
+    return <WidgetLayoutContext.Provider value={{layout, setLayout, editConfig, deleteWidget, addWidget, moveWidget, getNewId}}>{children}</WidgetLayoutContext.Provider>;
 
 };
 

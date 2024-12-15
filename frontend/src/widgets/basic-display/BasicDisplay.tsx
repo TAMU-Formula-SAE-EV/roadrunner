@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { useData } from "../../data-provider/DataProvider";
-import { WidgetProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../types";
-import WidgetWrapper from "../utils/WidgetWrapper";
+import { WidgetComponentProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../types";
 import { WIDGET_TYPE } from "../types";
 import { DATASTREAM, datastreams } from "../../shared-types";
 
@@ -11,13 +10,8 @@ export interface BasicDisplayConfig extends WidgetConfig {
     dataKey: DATASTREAM;
 }
 
-//specify the particlar configuration type 
-interface BasicDisplayProps extends WidgetProps {
-    config: BasicDisplayConfig;
-}
-
 //component which defines the widget (and its behavior)
-const BasicDisplayComponent: React.FC<BasicDisplayProps> = ({ i, config }) => {
+const BasicDisplayComponent: React.FC<WidgetComponentProps<BasicDisplayConfig>> = ({ id, config }) => {
     const { data } = useData();
     const value = data[config.dataKey] ? data[config.dataKey].value : null;
 
@@ -64,7 +58,7 @@ const defaultConfig = {
     dataKey: "speed"
 } as BasicDisplayConfig;
 
-const BasicDisplay: WidgetType<BasicDisplayProps, BasicDisplayConfig> = {
+const BasicDisplay: WidgetType<BasicDisplayConfig> = {
     Component: BasicDisplayComponent,
     Form: BasicDisplayForm,
     defaultConfig

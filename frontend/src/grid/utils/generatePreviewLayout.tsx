@@ -1,8 +1,8 @@
 import { GridItem, Widget } from "../../widgets/types";
 import { GridState, Monitor } from "../consts";
-import getUpdatedWidgetPosition from "./getUpdatedHoverPosition";
+import getUpdatedWidgetPosition from "./getHoverPosition";
 
-const handleWidgetMoveHover = (
+const generatePreviewLayout = (
   hoverPosition: { x: number; y: number },
   layout: Widget[],
   preview: GridItem
@@ -11,4 +11,4 @@ const handleWidgetMoveHover = (
   return { layout, preview: { ...preview, ...hoverPosition } };
 };
 
-export default handleWidgetMoveHover;
+export default generatePreviewLayout;

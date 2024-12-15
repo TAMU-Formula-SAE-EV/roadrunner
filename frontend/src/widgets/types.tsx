@@ -35,23 +35,22 @@ export interface WidgetConfig {
     maxW?: number;
 }
 
-export interface WidgetProps {
+export interface WidgetComponentProps<Config extends WidgetConfig> {
     //uniquely identifies the widget (should correspond to Widget.i)
-    i: number;
+    id: number;
     //the widget's config
-    config: WidgetConfig;
+    config: Config;
 };
 
 export interface FormProps<T extends WidgetConfig> {
-
     //the current config
     config: T;
     //
     setConfigState: (t: T) => void;
 };
 
-export interface WidgetType<WidgetProps, ConfigType extends WidgetConfig> {
-    Component: React.FC<WidgetProps>;
+export interface WidgetType<ConfigType extends WidgetConfig> {
+    Component: React.FC<WidgetComponentProps<ConfigType>>;
     Form: React.FC<FormProps<ConfigType>>;
     defaultConfig: ConfigType;
 }

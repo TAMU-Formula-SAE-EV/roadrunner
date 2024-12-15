@@ -2,151 +2,40 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Widget, WidgetConfig, GridItem, ResizeHandle } from '../widgets/types';
 import { Widget as WidgetComponent } from '../widgets/Widget';
-import EmptyWidget from '../widgets/empty-widget/EmptyWidget';
 import { GRID_COLUMNS, GRID_ROWS, GridState } from "./consts";
 import "./styles.css";
-import getUpdatedHoverPosition from './utils/getUpdatedHoverPosition';
+import getUpdatedHoverPosition from './utils/getHoverPosition';
 import { useWidgetLayout } from './GridContext';
-import handleWidgetMoveHover from './utils/handleWidgetMoveHover';
-import { assert } from 'console';
-import handleWidgetResizeHover from './utils/handleWidgetResizeHover';
+import handleWidgetResizeHover from './utils/getWidgetResizePreview';
+import useDropRef from './hooks/useDropRef';
+import useResizeRef from './hooks/useResizeRef';
 
 interface GridProps {
   setBackgroundBlur: (blur: boolean) => void;
 }
 
 const Grid: React.FC<GridProps> = ({setBackgroundBlur}) => {
-
-
-  //temporary!!! just for testing
-  const initialWidgets: Widget[] = [
-    {config: EmptyWidget.defaultConfig, h: 1, id: 1, w: 1, x: 0, y: 0}, 
-    {config: EmptyWidget.defaultConfig, h: 1, id: 2, w: 1, x: 1, y: 1}
-  ];
   
   //accesses and modifies global state
   //hidden from the user during drag/resize operations
-  const {layout, setLayout, addWidget, moveWidget} = useWidgetLayout();
+  const {layout, setLayout} = useWidgetLayout();
 
-  //temporary grid state which is reflected to the user 
-  //overrides actual state visual during drag/resize operations
+  //overrides actual layout state visual during drag/resize operations
   const [tempGridState, setTempGridState] = useState<GridState | null>(null);
 
-  //used to show/hide edit and resize buttons
+  //used to show/hide edit and resize buttons when a particular
+  //widget is clicked
   const [selectedWidgetId, setSelectedWidgetId] = useState<number | null>(null);
 
-  /* todo, remove this*/
-  useEffect(() => {
-    console.log("setting the initial layout!!");
-    setLayout(initialWidgets);
-  }, []);
-
-  useEffect(() => {
-    console.log(tempGridState);
-  }, [tempGridState]);
-
-  const [, resize] = useDrop({
-    accept: ["RESIZE"],
-    hover: (item: {id: number, handle: ResizeHandle}, monitor) => {
-      const gridPosition = getUpdatedHoverPosition(monitor); 
-      if (!gridPosition) throw new Error("could not get updated position for resize hover");
-
-      if (!tempGridState) {
-        const resizedWidget = layout.find((w: Widget) => {return w.id === item.id});
-        if (!resizedWidget) throw new Error("attempting to resize non-existant widget");
-
-        setTempGridState({
-          layout: layout.filter((w: Widget) => {return w.id !== item.id}), 
-          draggedWidget: null, 
-          resizedWidget,
-          preview: resizedWidget as GridItem
-        });
-      } else {
-        const originalPosition = layout.find((w: Widget) => {return w.id === item.id});
-        if (!originalPosition) throw new Error("cannot find original position"); 
-        setTempGridState({
-          ...tempGridState,
-          ...handleWidgetResizeHover(gridPosition, tempGridState.layout, tempGridState.preview, item.handle, originalPosition),
-        })
-      }
-    }, 
-    drop: (item: {id: number, handle: ResizeHandle}, monitor) => {
-      setLayout(layout.map((w: Widget) => {if (w.id === item.id) return {...w, ...tempGridState?.preview}; else return w;}))
-      setTempGridState(null);
-    }, 
-  });
-
-  const [, drop] = useDrop({
-    accept: ["WIDGET", "NEW_WIDGET"],
-    hover: (item: { w: number, h: number, config: WidgetConfig}, monitor) => {
-
-      const gridPosition = getUpdatedHoverPosition(monitor); 
-      if (!gridPosition) throw new Error("could not get updated position for drag");
-
-      //if it's a new drag, need to update the gridState ...
-      if (!tempGridState) {
-
-        if (monitor.getItemType() === "NEW_WIDGET") {
-          const {x, y} = gridPosition;
-          
-          const newWidget: Widget = {...item, x, y, id: -1};
-          onMoveDragStart(newWidget);
-
-        } else if (monitor.getItemType() === "RESIZE") {
-
-        };
-        
-      }else{
-        setTempGridState({
-          ...tempGridState, 
-          ...handleWidgetMoveHover(gridPosition, tempGridState.layout, tempGridState.preview)
-        })
-      }
-      
-    },
-    drop: (item: { w: number; h: number; config: WidgetConfig}, monitor) => {
-      const didDrop = monitor.didDrop();
-      if (didDrop) return;
-
-      const position = getUpdatedHoverPosition(monitor);
-      if (!position) throw new Error("could not get position for dropped widget");
-
-      const {x, y} = position;
-
-      // find the dragged widget
-      if (!tempGridState?.draggedWidget) throw new Error("dropped while null");
-
-      // create updated widget with new position
-      const updatedWidget = {
-        ...tempGridState.draggedWidget,
-        x,
-        y
-      };
-    
-      if (monitor.getItemType() === "NEW_WIDGET") 
-        addWidget({...updatedWidget}, updatedWidget.config);
-      else if (monitor.getItemType() === "WIDGET")
-        moveWidget(updatedWidget.id, {x, y});
-
-      setTempGridState(null);
-    }, 
-
-  });
-
-  const onMoveDragStart = useCallback((widget: Widget) => {
-    setTempGridState({
-      layout: layout.filter((w: Widget) => {return w.id !== widget.id}),
-      resizedWidget: null,
-      draggedWidget: widget,
-      preview: widget as GridItem
-    });
-  }, [layout, tempGridState]);
+  //get references to handle resize/drag operations
+  const resizeRef = useResizeRef(tempGridState, setTempGridState);
+  const dropRef = useDropRef(tempGridState, setTempGridState);
 
   return (
     <div 
       ref={(node) => {
-        resize(node);
-        drop(node);
+        resizeRef(node);
+        dropRef(node);
       }}
       className="grid-container"
       style={{
@@ -173,7 +62,6 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur}) => {
         >
           <WidgetComponent 
             widget={widget}
-            onDragStart={() => onMoveDragStart(widget)}
             selected={selectedWidgetId === widget.id}
           />
         </div>
