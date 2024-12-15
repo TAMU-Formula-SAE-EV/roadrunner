@@ -4,6 +4,16 @@
     margin: 20px;
     align-self: center;
     border-radius: 20px;
+    z-index: 10;
+}
+
+.temporary-grid-container { 
+    width: 90vw;
+    height: 85vh;
+    margin: 20px;
+    align-self: center;
+    border-radius: 20px;
+    z-index: -1;
 }
 
 .highlighted {

@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "./navbar/NavBar";
 import "./styles.css";
 import Grid from "../grid/Grid";
 import Menu from "./menu/Menu";
 import { MENU_STATE } from "./menu/types";
-import { WidgetConfig } from "../widgets/types";
 
 const ANIMATION_DURATION = 300;
 
@@ -15,9 +14,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const [backgroundBlur, setBackgroundBlur] = useState<boolean>(false);
   const [menuState, setMenuState] = useState<MENU_STATE>(MENU_STATE.DEFAULT);
 
-  const [incomingWidget, setIncomingWidget] = useState<WidgetConfig | null>(null);
-
-  // Close the menu after animation, allowing time for state reset
+  // close the menu after animation, allowing time for state reset
   useEffect(() => {
     if (!inMenu) {
       const timeout = setTimeout(() => {
@@ -28,18 +25,13 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   }, [inMenu]);
 
-  const handleWidgetSpawn = (widgetPreset: WidgetConfig) => {
-    setInMenu(false);
-    setIncomingWidget(widgetPreset);
-  };
-
   return (
     <div className={"dashboard-container " + (inMenu ? "in-menu " : "") + (backgroundBlur ? "background-blur" : "")}>
         {
-            <Menu state={menuState} setMenuState={setMenuState} handleWidgetSpawn={handleWidgetSpawn} />
+            <Menu state={menuState} setMenuState={setMenuState} onWidgetSpawn={() => setInMenu(false)} />
         }
       <div className="dashboard-contents" onClick={() => (inMenu ? setInMenu(false) : null)}>
-        <Grid incomingWidget={incomingWidget} setBackgroundBlur={setBackgroundBlur} />
+        <Grid setBackgroundBlur={setBackgroundBlur} />
         <NavBar changeMenuState={() => setInMenu(true)} />
       </div>
     </div>

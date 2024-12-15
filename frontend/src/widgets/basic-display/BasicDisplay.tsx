@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { useData } from "../../data-provider/DataProvider";
-import { WidgetProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../types";
-import WidgetWrapper from "../utils/WidgetWrapper";
+import { WidgetComponentProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../types";
 import { WIDGET_TYPE } from "../types";
 import { DATASTREAM, datastreams } from "../../shared-types";
 
@@ -11,20 +10,12 @@ export interface BasicDisplayConfig extends WidgetConfig {
     dataKey: DATASTREAM;
 }
 
-//specify the particlar configuration type 
-interface BasicDisplayProps extends WidgetProps {
-    config: BasicDisplayConfig;
-}
-
 //component which defines the widget (and its behavior)
-const BasicDisplay: WidgetType<BasicDisplayProps, FormProps<BasicDisplayConfig>, BasicDisplayConfig> = ({ selected, i, config, setGridEnabled }) => {
+const BasicDisplayComponent: React.FC<WidgetComponentProps<BasicDisplayConfig>> = ({ id, config }) => {
     const { data } = useData();
     const value = data[config.dataKey] ? data[config.dataKey].value : null;
 
-    //make sure to use the widget wrapper!
-    return <WidgetWrapper selected={selected} config={config} Form={BasicDisplay.Form} i={i} setGridEnabled={setGridEnabled}>
-        {config.dataKey}: {value}
-    </WidgetWrapper>;
+    return <>{config.dataKey}: {value}</>;
 };
 
 
@@ -56,10 +47,9 @@ const BasicDisplayForm: React.FC<FormProps<BasicDisplayConfig>> = ({setConfigSta
         </div>
     );
 };
-BasicDisplay.Form = BasicDisplayForm;
 
 //define the default configuration
-BasicDisplay.defaultConfig = {
+const defaultConfig = {
     title: "Basic Display",
     w: 1, 
     h: 1,
@@ -67,5 +57,11 @@ BasicDisplay.defaultConfig = {
     type: WIDGET_TYPE.BASIC_DISPLAY,
     dataKey: "speed"
 } as BasicDisplayConfig;
+
+const BasicDisplay: WidgetType<BasicDisplayConfig> = {
+    Component: BasicDisplayComponent,
+    Form: BasicDisplayForm,
+    defaultConfig
+}
 
 export default BasicDisplay;

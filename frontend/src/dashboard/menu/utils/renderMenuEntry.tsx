@@ -4,8 +4,7 @@ import { MENU_STATE, MenuEntry } from "../types";
 import {MenuItem} from "../MenuItem";
 
 
-
-const renderMenuEntry = (entry: MenuEntry<any>, setMenuState: (state: MENU_STATE) => void, handleWidgetSpawn: (widgetPreset: WidgetConfig) => void): JSX.Element => {
+const renderMenuEntry = (entry: MenuEntry<any>, setMenuState: (state: MENU_STATE) => void, onWidgetSpawn: () => void): JSX.Element => {
     
     if (entry.redirect !== undefined) {
         const redirect = entry.redirect;
@@ -18,7 +17,7 @@ const renderMenuEntry = (entry: MenuEntry<any>, setMenuState: (state: MENU_STATE
         const widgetPreset = entry.widget;
         return (
             <div>
-                <WidgetSpawner widgetPreset={widgetPreset} handleWidgetSpawn={handleWidgetSpawn}>
+                <WidgetSpawner config={widgetPreset} onDragStart={onWidgetSpawn}>
                     <MenuItem title={widgetPreset.title}></MenuItem>
                 </WidgetSpawner>
             </div>

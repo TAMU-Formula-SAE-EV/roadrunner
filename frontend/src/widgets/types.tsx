@@ -6,7 +6,17 @@ export enum WIDGET_TYPE {EMPTY, BASIC_DISPLAY, RECENT_VALUES};
 export type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 export const RESIZE_HANDLES: ResizeHandle[] = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
-export interface Widget extends Layout {
+export type GridItem = {
+    //coordinates
+    x: number;
+    y: number;
+    //dimensions
+    w: number;
+    h: number;
+}
+
+export interface Widget extends GridItem {
+    id: number;
     config: WidgetConfig;
 }
 
@@ -25,26 +35,22 @@ export interface WidgetConfig {
     maxW?: number;
 }
 
-export interface WidgetProps {
+export interface WidgetComponentProps<Config extends WidgetConfig> {
     //uniquely identifies the widget (should correspond to Widget.i)
-    i: string;
-    //whether or not the widget is selected
-    selected: boolean;
+    id: number;
     //the widget's config
-    config: WidgetConfig;
-    //enable/disable the grid when we enter/exit the form
-    setGridEnabled: (enabled: boolean) => void;
+    config: Config;
 };
 
 export interface FormProps<T extends WidgetConfig> {
-
     //the current config
     config: T;
     //
     setConfigState: (t: T) => void;
 };
 
-export interface WidgetType<WidgetProps, FormProps, ConfigType> extends React.FC<WidgetProps> {
-    Form: React.FC<FormProps>;
+export interface WidgetType<ConfigType extends WidgetConfig> {
+    Component: React.FC<WidgetComponentProps<ConfigType>>;
+    Form: React.FC<FormProps<ConfigType>>;
     defaultConfig: ConfigType;
 }

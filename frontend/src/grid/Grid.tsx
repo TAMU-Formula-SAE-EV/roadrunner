@@ -1,140 +1,99 @@
-import GridLayout, { Layout } from "react-grid-layout";
-import { useEffect, useRef, useState } from "react";
-import { Widget, WidgetConfig } from "../widgets/types";
+import React, { useState } from 'react';
+import { Widget as WidgetComponent } from '../widgets/Widget';
+import { GRID_COLUMNS, GRID_ROWS, GridState } from "./consts";
 import "./styles.css";
-import "react-grid-layout/css/styles.css";
-import { DEBUG } from "../utils/debug";
-import { getWidgetComponent } from "../widgets/utils/getWidgetComponent";
-import { useWidgets } from "../widgets/hooks/WidgetContext";
-import BasicDisplay from "../widgets/basic-display/BasicDisplay";
+import { useWidgetLayout } from './GridContext';
+import useDropRef from './hooks/useDropRef';
+import useResizeRef from './hooks/useResizeRef';
 
 interface GridProps {
-  setBackgroundBlur: (state: boolean) => void;
-  incomingWidget: WidgetConfig | null;
+  setBackgroundBlur: (blur: boolean) => void;
 }
 
-const Grid: React.FC<GridProps> = ({setBackgroundBlur, incomingWidget}) => {
-  const {widgets, setWidgets, addWidget, deleteWidget} = useWidgets();
-  const [selectedWidget, setSelectedWidget] = useState<Widget | null>(null);
-  const widgetID = useRef<number>(0);
+const Grid: React.FC<GridProps> = ({setBackgroundBlur}) => {
   
-  const [gridWidth, setGridWidth] = useState<number>(0);
-  const [enabled, setEnabled] = useState<boolean>(true);
-  const gridContainerRef = useRef<HTMLDivElement>(null);
+  //accesses global widget layout state
+  //hidden from the user during drag/resize operations
+  const {layout} = useWidgetLayout();
 
+  //overrides actual layout state visual during drag/resize operations
+  const [tempGridState, setTempGridState] = useState<GridState | null>(null);
 
-  //updates grid width based on container
-  useEffect(() => {
-    if (gridContainerRef.current) {
-      const updateGridWidth = () => {
-        if (gridContainerRef.current) {
-          setGridWidth(gridContainerRef.current.offsetWidth);
-        }
-      };
-      updateGridWidth();
-      const resizeObserver = new ResizeObserver(() => {
-        updateGridWidth();
-      });
+  //used to show/hide edit and resize buttons when a particular
+  //widget is clicked
+  const [selectedWidgetId, setSelectedWidgetId] = useState<number | null>(null);
 
-      resizeObserver.observe(gridContainerRef.current);
-      return () => {
-        if (gridContainerRef.current) {
-          resizeObserver.unobserve(gridContainerRef.current);
-        }
-      };
-    }
-  }, []);
-
-  const handleDrop = (widget: Widget) => {
-    const droppedWidget = {
-      ...widget,
-      w: incomingWidget ? incomingWidget.h : 1,
-      h: incomingWidget ? incomingWidget.w : 1, 
-      config: incomingWidget || BasicDisplay.defaultConfig,
-      i: String(widgetID.current), 
-      resizeHandles: []
-    };
-    widgetID.current += 1;
-    addWidget(droppedWidget);
-  };
-
-  const handleSelectedWidgetChange = (newSelectedWidget: Widget | null ): void => {
-
-    console.log("handle selected widget called");
-
-    if (newSelectedWidget !== null) {
-
-      const updatedWidget: Widget = {
-        ...newSelectedWidget,
-        resizeHandles: newSelectedWidget.config.availableHandles,
-        isResizable: true
-      }
-  
-      const temp = widgets.map((w) => {
-        if (w === newSelectedWidget) return updatedWidget;
-        else return {...w, resizeHandles: [], isResizable: false}
-      });
-  
-      setWidgets(temp);
-
-    } else {
-      const temp = widgets.map((w) => {
-        return {...w, resizeHandles: [], isResizable: false}
-      });
-  
-      setWidgets(temp);
-    }
-
-    setSelectedWidget(newSelectedWidget); 
-  };
-
-  const handleLayoutChange = (newLayout: Layout[]) => {
-    const updatedWidgets = widgets.map(widget => {
-      const layoutItem = newLayout.find(item => item.i === widget.i);
-      return layoutItem
-        ? { ...widget, x: layoutItem.x, y: layoutItem.y, w: layoutItem.w, h: layoutItem.h }
-        : widget;
-    });
-
-    setWidgets(updatedWidgets);
-  };
-
-
-  var layout: Widget[] = widgets;
-  if (!enabled) layout = layout.map((w) => {return {...w, isDraggable: false}});
-
-  console.log("widgets: ", widgets);
-  console.log("selected Widget", selectedWidget);
+  //get references to handle resize/drag operations
+  const resizeRef = useResizeRef(tempGridState, setTempGridState);
+  const dropRef = useDropRef(tempGridState, setTempGridState);
 
   return (
-    <div ref={gridContainerRef} className={"grid-container " + (DEBUG ? "debug " : "")}>
-      {gridWidth > 0 && (
-        <GridLayout
-          className="layout"
-          layout={layout}
-          cols={16}
-          rowHeight={gridWidth / 16 - 10}
-          width={gridWidth} 
-          isDraggable={enabled}
-          isResizable={enabled}
-          isDroppable={enabled}
-          onLayoutChange={handleLayoutChange}
-          compactType={null}
-          isBounded={true}
-          onDrag={() => setBackgroundBlur(true)}
-          onDragStop={() => {setBackgroundBlur(false); setSelectedWidget(null)}}
-          onResizeStart={() => setBackgroundBlur(true)}
-          onResizeStop={() => setBackgroundBlur(false)}
-          onDrop={(_, widget: Widget) => {setBackgroundBlur(false); handleDrop(widget);}}
-          style={{ width: "100%", height: "100%" }}
-          
+    <div 
+      ref={(node) => {
+        resizeRef(node);
+        dropRef(node);
+      }}
+      className="grid-container"
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`,
+        gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
+        gap: "2px",
+        position: "relative",
+      }}
+    >
+
+      {/* render widgets (make them invisible if during a drop/resize operation)*/}
+      {layout.map(widget => (
+        <div 
+          key={widget.id}
+          style={{
+            gridColumnStart: widget.x + 1,
+            gridRowStart: widget.y + 1,
+            gridColumnEnd: widget.x + widget.w + 1,
+            gridRowEnd: widget.y + widget.h + 1,
+            opacity: tempGridState ? 0 : 1
+          }}
+          onClick={() => setSelectedWidgetId(widget.id)}
         >
-          {widgets.map((widget) => (
-            <div key={widget.i} onClick={() => { handleSelectedWidgetChange(widget); setBackgroundBlur(false); }}>
-              {getWidgetComponent(widget.config, widget.i, widget.i === selectedWidget?.i, setEnabled)}
-            </div>
-          ))}
-        </GridLayout>
+          <WidgetComponent 
+            widget={widget}
+            selected={selectedWidgetId === widget.id}
+          />
+        </div>
+      ))}
+
+      {/* if in the middle of a drop/resize operation, display temp widget locations*/}
+      {tempGridState?.layout.map(widget => (
+        <div 
+          key={`${widget.id}-temp-location`}
+          style={{
+            gridColumnStart: widget.x + 1,
+            gridRowStart: widget.y + 1,
+            gridColumnEnd: widget.x + widget.w + 1,
+            gridRowEnd: widget.y + widget.h + 1,
+            backgroundColor: "grey"
+          }}
+        />
+      ))}
+
+      {/* render the drop/resize preview */}
+      {tempGridState?.preview && (
+        <div 
+          style={{
+            width: "100%",
+            height: "100%",
+            position: 'relative',
+            gridColumnStart: tempGridState.preview.x + 1,
+            gridRowStart: tempGridState.preview.y + 1,
+            gridColumnEnd: tempGridState.preview.x + tempGridState.preview.w + 1,
+            gridRowEnd: tempGridState.preview.y + tempGridState.preview.h + 1,
+            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+            border: '2px dashed blue',
+            pointerEvents: 'none',
+            zIndex: 10
+          }}
+        />
       )}
     </div>
   );

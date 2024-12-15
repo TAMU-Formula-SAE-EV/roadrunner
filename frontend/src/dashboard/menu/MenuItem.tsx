@@ -2,7 +2,6 @@ import "./styles.css";
 
 interface MenuItemProps {
     title: String;
-
 };
 
 export const MenuItem: React.FC<MenuItemProps> = ({title}) => {
