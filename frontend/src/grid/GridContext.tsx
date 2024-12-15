@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { GridItem, Widget, WidgetConfig } from "../widgets/types";
+import { LAYOUT_STORAGE_KEY } from "../consts";
 
 
 /*
@@ -34,14 +35,21 @@ export const WidgetLayoutContext = createContext<WidgetLayoutType>(
 const WidgetLayoutProvider: React.FC<WidgetLayoutProps> = ({children}) => {
     
     const nextWidgetId = useRef<number>(0);
-    const [layout, setLayout] = useState<Widget[]>([]);
+    
+    //retrieve existing layout from local storage
+    const [layout, setLayout] = useState<Widget[]>(() => {
+        const savedLayout = localStorage.getItem(LAYOUT_STORAGE_KEY);
+        return savedLayout ? JSON.parse(savedLayout) : [];
+    });
 
-
-    /*
-        Need to constantly load the next id bc we may 
-        load a template with overlapping ids
-    */
     useEffect(() => {
+        //save layout to storage
+        localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(layout));
+        
+
+        //find next id
+        //(Need to constantly load the next id bc we may 
+        //load a template with overlapping ids)
         let highestWidgetId = -1;
         layout.forEach((w: Widget) => {
             highestWidgetId = (w.id > highestWidgetId) ? w.id : highestWidgetId; 
