@@ -2,34 +2,22 @@ import { useDrag } from "react-dnd";
 import { Widget as Widget_t, WidgetConfig } from "./types";
 import { getWidgetType } from "./utils/getWidgetType";
 import ResizeHandle from "./utils/ResizeHandle";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./styles.css";
 import { useWidgetLayout } from "../grid/GridContext";
-import ReactDOM from "react-dom";
 
 /*
   Handles universal widget behavior: 
   - style
   - resize handles
   - drag behavior
+  - resize behavoir
   - edit button
   - spawn edit form
   - render widget contents
 */
-
-// map each handle to its CSS position
-const handlePositions: Record<string, React.CSSProperties> = {
-  n: { top: 0, left: "50%", transform: "translate(-50%, -50%)" },
-  s: { bottom: 0, left: "50%", transform: "translate(-50%, 50%)" },
-  e: { right: 0, top: "50%", transform: "translate(50%, -50%)" },
-  w: { left: 0, top: "50%", transform: "translate(-50%, -50%)" },
-  ne: { top: 0, right: 0, transform: "translate(50%, -50%)" },
-  nw: { top: 0, left: 0, transform: "translate(-50%, -50%)" },
-  se: { bottom: 0, right: 0, transform: "translate(50%, 50%)" },
-  sw: { bottom: 0, left: 0, transform: "translate(-50%, 50%)" },
-};
 
 interface WidgetProps {
   widget: Widget_t;
@@ -49,32 +37,30 @@ export const Widget: React.FC<WidgetProps> = ({
   const [formActive, setFormActive] = useState<boolean>(false);
 
   //temporary, uncommitted config state
+  //pushed or discarded depending on how user exits edit form
   const [configState, setConfigState] = useState<WidgetConfig>(config);
-
-  useEffect(() => {console.log(formActive)}, [formActive]);
 
   const [_, drag] = useDrag({
     type: "WIDGET",
     item: () => {
-      const d = {
+      return {
         id: widget.id,
         type: "WIDGET",
         w: widget.w,
         h: widget.h,
         config,
       };
-      console.log(d);
-      return d;
     },
   });
 
   const handleEditClick = (e: React.MouseEvent) => {
+    console.log("edit button clicked!!!!");
     setFormActive(true);
   };
   
   const handleSaveButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     editConfig(id, configState);
-    setTimeout(() => setFormActive(false), 50);
+    setFormActive(false);
   };
   
   
@@ -90,7 +76,7 @@ export const Widget: React.FC<WidgetProps> = ({
         <br />
         <br />
         <button onClick={handleSaveButtonClick}>Save</button>
-        <button onClick={() => {deleteWidget(id)}}>delete</button>
+        <button onClick={() => {deleteWidget(id)}}>Delete</button>
       </div>
     </>);
 
@@ -115,23 +101,21 @@ export const Widget: React.FC<WidgetProps> = ({
       {/* Show handles and edit button when selected */}
       {selected &&
         availableHandles.map((handle) => (
-          <div style={{
-            position: "absolute",
-            ...handlePositions[handle],
-          }}
-          key={handle}>
             <ResizeHandle
               key={`${widget.id}-${handle}`}
               id={widget.id}
               handle={handle}
             />
-          </div>
         ))}
         
 
         { selected &&
-          <button className="generic-button edit-button" onClick={() => {}} style={{position: "absolute", right: 0, top: 0}}>
-              <FontAwesomeIcon icon={faEllipsisVertical} onClick={handleEditClick}/>
+          <button 
+            className="generic-button edit-button" 
+            onClick={handleEditClick} 
+            style={{position: "absolute", right: 0, top: 0}}
+          >
+            <FontAwesomeIcon icon={faEllipsisVertical}/>
           </button>
         }
 

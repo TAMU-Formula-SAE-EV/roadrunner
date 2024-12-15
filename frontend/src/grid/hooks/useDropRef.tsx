@@ -29,19 +29,16 @@ const useDropRef: (tempGridState: GridState | null, setTempGridState: (newState:
         //if it's a new drag, need to update the gridState ...
         if (!tempGridState) {
 
-            console.log("updating temp grid state");
-
             const {x, y} = gridPosition;
             const id = (item.id !== undefined) ? item.id : getNewId();
             
             const newWidget: Widget = {...item, x, y, id};
 
-            console.log("id", newWidget.id);
             setTempGridState({
-            layout: layout.filter((w: Widget) => {return w.id !== newWidget.id}),
-            resizedWidget: null,
-            draggedWidget: newWidget,
-            preview: newWidget as GridItem
+                layout: layout.filter((w: Widget) => {return w.id !== newWidget.id}),
+                resizedWidget: null,
+                draggedWidget: newWidget,
+                preview: newWidget as GridItem
             }); 
 
         }else{
@@ -53,27 +50,27 @@ const useDropRef: (tempGridState: GridState | null, setTempGridState: (newState:
         
         },
         drop: (item: { w: number; h: number; config: WidgetConfig, id?: number}, monitor) => {
-        const didDrop = monitor.didDrop();
-        if (didDrop) return;
+            const didDrop = monitor.didDrop();
+            if (didDrop) return;
 
-        const position = getHoverPosition(monitor);
-        if (!position) throw new Error("could not get position for dropped widget");
+            const position = getHoverPosition(monitor);
+            if (!position) throw new Error("could not get position for dropped widget");
 
-        const {x, y} = position;
+            const {x, y} = position;
 
-        // find the dragged widget
-        if (!tempGridState?.draggedWidget) throw new Error("dropped while null");
+            // find the dragged widget
+            if (!tempGridState?.draggedWidget) throw new Error("dropped while null");
 
-        // create updated widget with new position
-        const updatedWidget = {
-            ...tempGridState.draggedWidget,
-            x,
-            y
-        };
+            // create updated widget with new position
+            const updatedWidget = {
+                ...tempGridState.draggedWidget,
+                x,
+                y
+            };
 
-        const updatedGridLayout = [...tempGridState.layout, updatedWidget];
-        setLayout(updatedGridLayout);
-        setTempGridState(null);
+            const updatedGridLayout = [...tempGridState.layout, updatedWidget];
+            setLayout(updatedGridLayout);
+            setTempGridState(null);
         }, 
 
     });

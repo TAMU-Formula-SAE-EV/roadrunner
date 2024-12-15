@@ -1,12 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
-import { Widget, WidgetConfig, GridItem, ResizeHandle } from '../widgets/types';
+import React, { useState } from 'react';
 import { Widget as WidgetComponent } from '../widgets/Widget';
 import { GRID_COLUMNS, GRID_ROWS, GridState } from "./consts";
 import "./styles.css";
-import getUpdatedHoverPosition from './utils/getHoverPosition';
 import { useWidgetLayout } from './GridContext';
-import handleWidgetResizeHover from './utils/getWidgetResizePreview';
 import useDropRef from './hooks/useDropRef';
 import useResizeRef from './hooks/useResizeRef';
 
@@ -16,9 +12,9 @@ interface GridProps {
 
 const Grid: React.FC<GridProps> = ({setBackgroundBlur}) => {
   
-  //accesses and modifies global state
+  //accesses global widget layout state
   //hidden from the user during drag/resize operations
-  const {layout, setLayout} = useWidgetLayout();
+  const {layout} = useWidgetLayout();
 
   //overrides actual layout state visual during drag/resize operations
   const [tempGridState, setTempGridState] = useState<GridState | null>(null);
