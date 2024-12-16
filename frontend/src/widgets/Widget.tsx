@@ -44,11 +44,8 @@ export const Widget: React.FC<WidgetProps> = ({
     type: "WIDGET",
     item: () => {
       return {
-        id: widget.id,
         type: "WIDGET",
-        w: widget.w,
-        h: widget.h,
-        config,
+        ...widget
       };
     },
   });

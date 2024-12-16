@@ -1,11 +1,18 @@
 import { GridItem, ResizeHandle, Widget } from "../../widgets/types";
-import { GridState } from "../consts";
+import { GRID_COLUMNS, GRID_ROWS, GridOperation } from "../consts";
 
-const getWidgetResizePreview = (hoverPosition: {x: number, y: number}, layout: Widget[], preview: GridItem, handle: ResizeHandle, originalPosition: GridItem) :
-    {layout: Widget[], preview: GridItem} => {
 
-        let updatedPreview = preview;
+/*Gets the preview location for widget during operation assuming
+no collisions with other widgets */
+const getNaiveResizePreview = (operation: GridOperation, hoverPosition: {x: number, y: number}) :
+    GridItem => {
 
+        let updatedPreview = operation.preview;
+        const originalPosition = operation.widget;
+        const {handle, preview} = operation;
+
+        if (!handle) throw new Error("Handle undefined during resize");
+        
         if (handle === 'n' || handle === 'ne' || handle === 'nw') {
             const displacement = (hoverPosition.y - originalPosition.y - originalPosition.h);
             
@@ -44,7 +51,14 @@ const getWidgetResizePreview = (hoverPosition: {x: number, y: number}, layout: W
             }
         }
         
-        return {layout, preview: updatedPreview};
+
+        //check grid bounds
+        updatedPreview.x = (updatedPreview.x >= 0) ? updatedPreview.x : 0;
+        updatedPreview.y = (updatedPreview.y >= 0) ? updatedPreview.y : 0;
+        updatedPreview.w = (updatedPreview.w + updatedPreview.x <= GRID_COLUMNS) ? updatedPreview.w : GRID_COLUMNS - updatedPreview.x;
+        updatedPreview.h = (updatedPreview.h + updatedPreview.y <= GRID_ROWS) ? updatedPreview.h : GRID_COLUMNS - updatedPreview.y;
+
+        return updatedPreview;
     }
 
-export default getWidgetResizePreview;
+export default getNaiveResizePreview;

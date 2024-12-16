@@ -1,9 +1,10 @@
 import { ConnectDropTarget, useDrop } from "react-dnd";
-import { GridState } from "../consts";
+import { GridOperation, WIDGET_OPERATION } from "../consts";
 import { useWidgetLayout } from "../GridContext";
 import { GridItem, ResizeHandle, Widget, WidgetConfig } from "../../widgets/types";
 import getHoverPosition from "../utils/getHoverPosition";
-import getWidgetResizePreview from "../utils/getWidgetResizePreview";
+import getNaiveResizePreview from "../utils/getNaiveResizePreview";
+import generatePreviewLayout from "../utils/generatePreviewLayout";
 
 
 /*
@@ -11,10 +12,10 @@ import getWidgetResizePreview from "../utils/getWidgetResizePreview";
 */
 
 
-const useResizeRef: (tempGridState: GridState | null, setTempGridState: (newState: GridState | null) => void) => ConnectDropTarget = 
+const useResizeRef: (tempGridState: GridOperation | null, setTempGridState: (newState: GridOperation | null) => void) => ConnectDropTarget = 
     (
-        tempGridState,
-        setTempGridState,
+        gridOperation,
+        setGridOperation,
     ) => {
 
     const {layout, setLayout, getNewId} = useWidgetLayout();
@@ -26,28 +27,34 @@ const useResizeRef: (tempGridState: GridState | null, setTempGridState: (newStat
         const gridPosition = getHoverPosition(monitor); 
         if (!gridPosition) throw new Error("could not get updated position for resize hover");
 
-        if (!tempGridState) {
+        if (!gridOperation) {
             const resizedWidget = layout.find((w: Widget) => {return w.id === item.id});
             if (!resizedWidget) throw new Error("attempting to resize non-existant widget");
 
-            setTempGridState({
-            layout: layout.filter((w: Widget) => {return w.id !== item.id}), 
-            draggedWidget: null, 
-            resizedWidget,
-            preview: resizedWidget as GridItem
+            setGridOperation({
+                layout: layout.filter((w: Widget) => {return w.id !== item.id}), 
+                widget: resizedWidget, 
+                preview: resizedWidget as GridItem,
+                operation: WIDGET_OPERATION.RESIZE, 
+                handle: item.handle
             });
         } else {
             const originalPosition = layout.find((w: Widget) => {return w.id === item.id});
             if (!originalPosition) throw new Error("cannot find original position"); 
-            setTempGridState({
-            ...tempGridState,
-            ...getWidgetResizePreview(gridPosition, tempGridState.layout, tempGridState.preview, item.handle, originalPosition),
+            setGridOperation({
+                ...gridOperation,
+                ...generatePreviewLayout(layout, gridOperation, monitor)
             })
         }
         }, 
         drop: (item: {id: number, handle: ResizeHandle}, monitor) => {
-        setLayout(layout.map((w: Widget) => {if (w.id === item.id) return {...w, ...tempGridState?.preview}; else return w;}))
-        setTempGridState(null);
+            
+            if (!gridOperation) throw new Error("attemped to drop resize while operation is null!!");
+            const previewLayout = generatePreviewLayout(layout, gridOperation, monitor);
+            const newLayout = [...previewLayout.layout, {...gridOperation.widget, ...previewLayout.preview }]
+
+            setLayout(newLayout);
+            setGridOperation(null);
         }, 
     });
 
