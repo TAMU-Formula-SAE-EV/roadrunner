@@ -1,5 +1,5 @@
 import React from "react";
-import { FormProps, RESIZE_HANDLES, WIDGET_TYPE, WidgetConfig, WidgetComponentProps, WidgetType } from "../../types";
+import { FormProps, RESIZE_HANDLES, WidgetConfig, WidgetComponentProps, WidgetType } from "../../types";
 
 //defines all the additional configuration settings for the widget
 export interface EmptyWidgetConfig extends WidgetConfig {
@@ -38,8 +38,6 @@ const defaultConfig = {
     h: 2, 
     //the resize handles which appear when selected
     availableHandles: RESIZE_HANDLES,
-    //identifying type 
-    type: WIDGET_TYPE.EMPTY
 };
 
 const EmptyWidget: WidgetType<EmptyWidgetConfig> = {

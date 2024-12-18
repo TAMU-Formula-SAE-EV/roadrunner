@@ -1,7 +1,7 @@
 import BasicDisplay, { BasicDisplayConfig } from "../../widgets/widget_types/basic-display/BasicDisplay";
 import EmptyWidget from "../../widgets/widget_types/empty-widget/EmptyWidget";
 import { RESIZE_HANDLES, WidgetConfig, WidgetType } from "../../widgets/types";
-import { WIDGET_TYPE } from "../../widgets/types";
+import GridDisplay from "../../widgets/widget_types/grid-display/GridDisplay";
 
 export enum MENU_STATE { DEFAULT, GRAPHS, DIALS }
 
@@ -21,6 +21,7 @@ export const GRAPHS_CONTENTS: MenuContents<any> = {
     contents: [
         {widget: {config: BasicDisplay.defaultConfig, typeId: BasicDisplay.typeId}},
         {widget: {config: EmptyWidget.defaultConfig, typeId: EmptyWidget.typeId}}, 
+        {widget: {config: GridDisplay.defaultConfig, typeId: GridDisplay.typeId}}
     ]
 };
 

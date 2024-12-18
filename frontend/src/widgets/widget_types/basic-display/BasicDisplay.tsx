@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import { useData } from "../../../data-provider/DataProvider";
 import { WidgetComponentProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../../types";
-import { WIDGET_TYPE } from "../../types";
 import { DATASTREAM, datastreams } from "../../../shared-types";
+import DatasteamSelect from "../../form_components/DatastreamSelect";
 
 
 // define all the configurable options unique to this widget type
@@ -24,26 +24,9 @@ const BasicDisplayForm: React.FC<FormProps<BasicDisplayConfig>> = ({setConfigSta
 
 
     // Handle changes to the selected datastream type
-    const handleDataKeyChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        const newDataKey = event.target.value as DATASTREAM;
-
-        setConfigState({ ...config, dataKey: newDataKey } as BasicDisplayConfig);
-    };
-
     return (
         <div>
-            <label htmlFor="dataKeySelect">Select Data Stream:</label>
-            <select
-                id="dataKeySelect"
-                value={config.dataKey}
-                onChange={handleDataKeyChange}
-            >
-                {datastreams.map((datastream) => (
-                    <option key={datastream} value={datastream}>
-                        {datastream}
-                    </option>
-                ))}
-            </select>
+            <DatasteamSelect datastream={config.dataKey} setDataStream={(key: DATASTREAM) => {setConfigState({ ...config, dataKey: key })}} />
         </div>
     );
 };
@@ -54,7 +37,6 @@ const defaultConfig = {
     w: 1, 
     h: 1,
     availableHandles: RESIZE_HANDLES,
-    type: WIDGET_TYPE.BASIC_DISPLAY,
     dataKey: "speed"
 } as BasicDisplayConfig;
 

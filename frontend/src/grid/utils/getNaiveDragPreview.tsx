@@ -6,8 +6,6 @@ import { GRID_COLUMNS, GRID_ROWS, GridOperationState } from "../consts";
 no collisions with other widgets */
 const getNaiveDragPreview: (operation: GridOperationState, hoverPosition: {x: number, y: number}) => GridItem = (operation, {x, y}) => {
 
-    console.log("getting naive drag preview");
-
     let updatedPreview: GridItem = operation.preview ? { ...operation.preview,  x, y} 
         : {h: operation.widget.h, w: operation.widget.w, x, y};
 

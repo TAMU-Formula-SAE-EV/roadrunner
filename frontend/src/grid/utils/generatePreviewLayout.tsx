@@ -28,8 +28,6 @@ const generatePreviewLayout = (
   hoverPosition: GridPosition,
 ): { layout: Widget<any>[]; preview: GridItem | null } => {
 
-  console.log("getting preview layout")
-
   //get global widget layout (and remove the widget we are moving/resizing)
   const layout = currentLayout.filter((w: Widget<any>) => {return w.id !== operation.widget.id});
 
