@@ -34,7 +34,7 @@ export const WidgetLayoutContext = createContext<WidgetLayoutType>(
 
 const WidgetLayoutProvider: React.FC<WidgetLayoutProps> = ({children}) => {
     
-    const nextWidgetId = useRef<number>(0);
+    const nextWidgetId = useRef<number>(1);
     
     //retrieve existing layout from local storage
     const [layout, setLayout] = useState<Widget[]>(() => {

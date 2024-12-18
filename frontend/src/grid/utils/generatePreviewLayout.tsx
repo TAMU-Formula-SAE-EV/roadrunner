@@ -1,6 +1,5 @@
 import { GridItem, Widget } from "../../widgets/types";
-import { GRID_COLUMNS, GRID_ROWS, GridOperation, Monitor, WIDGET_OPERATION } from "../consts";
-import { useWidgetLayout } from "../GridContext";
+import { GRID_COLUMNS, GRID_ROWS, GridOperationState, Monitor, GRID_OPERATION, GridPosition } from "../consts";
 import getHoverPosition from "./getHoverPosition";
 import getNaiveDragPreview from "./getNaiveDragPreview";
 import getNaiveResizePreview from "./getNaiveResizePreview";
@@ -25,18 +24,17 @@ const layoutCollides = (layout: GridItem[], item: GridItem): boolean => {
 
 const generatePreviewLayout = (
   currentLayout: Widget[],
-  operation: GridOperation, 
-  monitor: Monitor,
-): { layout: Widget[]; preview: GridItem } => {
+  operation: GridOperationState, 
+  hoverPosition: GridPosition,
+): { layout: Widget[]; preview: GridItem | null } => {
+
+  console.log("getting preview layout")
 
   //get global widget layout (and remove the widget we are moving/resizing)
   const layout = currentLayout.filter((w: Widget) => {return w.id !== operation.widget.id});
-  
-  const hoverPosition = getHoverPosition(monitor);
-  if (!hoverPosition) throw new Error("could not get hover position during operation");
 
   //get the preview assuming no collisions
-  const naivePreview: GridItem = operation.operation === WIDGET_OPERATION.MOVE ? getNaiveDragPreview(operation, hoverPosition) : 
+  const naivePreview: GridItem = operation.operation === GRID_OPERATION.MOVE ? getNaiveDragPreview(operation, hoverPosition) : 
     getNaiveResizePreview(operation, hoverPosition);
 
   //if there are no collisions, return

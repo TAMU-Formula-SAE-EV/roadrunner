@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./styles.css";
 import { useWidgetLayout } from "../grid/GridContext";
+import { GRID_OPERATION } from "../grid/consts";
 
 /*
   Handles universal widget behavior: 
@@ -44,8 +45,8 @@ export const Widget: React.FC<WidgetProps> = ({
     type: "WIDGET",
     item: () => {
       return {
-        type: "WIDGET",
-        ...widget
+        ...widget, 
+        operation: GRID_OPERATION.MOVE
       };
     },
   });
@@ -102,6 +103,7 @@ export const Widget: React.FC<WidgetProps> = ({
               key={`${widget.id}-${handle}`}
               id={widget.id}
               handle={handle}
+              config={config}
             />
         ))}
         

@@ -1,4 +1,5 @@
 
+import { GridOperationPayload, GRID_OPERATION } from "../../grid/consts";
 import { WidgetConfig } from "../types";
 import {useDrag} from "react-dnd";
 
@@ -9,19 +10,14 @@ interface WidgetSpawnerProps {
 }
 
 const WidgetSpawner: React.FC<WidgetSpawnerProps> = ({ config, onDragStart, children }) => {
-
-
-    
     
     const [{ isDragging }, drag] = useDrag({
         type: "NEW_WIDGET",
         item: () => {
           return { 
-            w: config.w, 
-            h: config.h, 
-            config, 
-            type: "NEW_WIDGET"
-          };
+            config,
+            operation: GRID_OPERATION.MOVE
+          } as GridOperationPayload<WidgetConfig>;
         },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),

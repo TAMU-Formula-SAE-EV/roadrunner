@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Widget as WidgetComponent } from '../widgets/Widget';
-import { GRID_COLUMNS, GRID_ROWS, GridOperation } from "./consts";
+import { GRID_COLUMNS, GRID_ROWS, GridOperationState } from "./consts";
 import "./styles.css";
 import { useWidgetLayout } from './GridContext';
-import useDropRef from './hooks/useDropRef';
-import useResizeRef from './hooks/useResizeRef';
+import useDragRef from './hooks/useDragRef';
 
 interface GridProps {
   setBackgroundBlur: (blur: boolean) => void;
@@ -17,22 +16,18 @@ const Grid: React.FC<GridProps> = ({setBackgroundBlur}) => {
   const {layout} = useWidgetLayout();
 
   //overrides actual layout state visual during drag/resize operations
-  const [gridOperation, setGridOperation] = useState<GridOperation | null>(null);
+  const [gridOperation, setGridOperation] = useState<GridOperationState | null>(null);
 
   //used to show/hide edit and resize buttons when a particular
   //widget is clicked
   const [selectedWidgetId, setSelectedWidgetId] = useState<number | null>(null);
 
   //get references to handle resize/drag operations
-  const resizeRef = useResizeRef(gridOperation, setGridOperation);
-  const dropRef = useDropRef(gridOperation, setGridOperation);
+  const dragRef = useDragRef(gridOperation, setGridOperation);
 
   return (
     <div 
-      ref={(node) => {
-        resizeRef(node);
-        dropRef(node);
-      }}
+      ref={dragRef}
       className="grid-container"
       style={{
         display: "grid",

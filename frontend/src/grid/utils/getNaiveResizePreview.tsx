@@ -1,15 +1,17 @@
 import { GridItem, ResizeHandle, Widget } from "../../widgets/types";
-import { GRID_COLUMNS, GRID_ROWS, GridOperation } from "../consts";
+import { GRID_COLUMNS, GRID_ROWS, GridOperationState } from "../consts";
 
 
 /*Gets the preview location for widget during operation assuming
 no collisions with other widgets */
-const getNaiveResizePreview = (operation: GridOperation, hoverPosition: {x: number, y: number}) :
+const getNaiveResizePreview = (operation: GridOperationState, hoverPosition: {x: number, y: number}) :
     GridItem => {
 
-        let updatedPreview = operation.preview;
+        const preview = operation.preview ? operation.preview : 
+            { ...operation.widget, ...hoverPosition};
+        let updatedPreview = preview;
         const originalPosition = operation.widget;
-        const {handle, preview} = operation;
+        const { handle } = operation;
 
         if (!handle) throw new Error("Handle undefined during resize");
         

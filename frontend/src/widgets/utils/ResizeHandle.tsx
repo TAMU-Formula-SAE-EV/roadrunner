@@ -1,5 +1,5 @@
 import { useDrag } from "react-dnd";
-import { ResizeHandle as ResizeHandle_t } from "../types";
+import { ResizeHandle as ResizeHandle_t, WidgetConfig } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
     faArrowUp, 
@@ -7,10 +7,12 @@ import {
     faArrowLeft, 
     faArrowRight 
 } from "@fortawesome/free-solid-svg-icons";
+import { GridOperationPayload, GRID_OPERATION } from "../../grid/consts";
 
-interface ResizeHandleProps {
+interface ResizeHandleProps<Config extends WidgetConfig> {
     id: number;
     handle: ResizeHandle_t;
+    config: Config;
 }
 
 // map each handle to its CSS position
@@ -37,10 +39,12 @@ const handleIcons: Record<ResizeHandle_t, { icon: any; rotation?: number }> = {
     sw: { icon: faArrowDown, rotation: 45 },
 };
 
-const ResizeHandle: React.FC<ResizeHandleProps> = ({ id, handle }) => {
+const ResizeHandle: React.FC<ResizeHandleProps<WidgetConfig>> = ({ id, handle, config }) => {
     const [_, drag] = useDrag({
         type: 'RESIZE',
-        item: () => ({ id, handle }),
+        item: () => ({ id, handle, config,
+            operation: GRID_OPERATION.RESIZE
+         } as GridOperationPayload<WidgetConfig>),
     });
 
     const { icon, rotation } = handleIcons[handle];
