@@ -15,16 +15,16 @@ export type GridItem = {
     h: number;
 }
 
-export interface Widget extends GridItem {
+export interface Widget<Config extends WidgetConfig> extends GridItem {
     id: number;
-    config: WidgetConfig;
+    config: Config;
+    //the widget type
+    typeId: number;
 }
 
 export interface WidgetConfig {
     //title which shows up in menu
     title: string;
-    //defines widget contents
-    type: WIDGET_TYPE;
     //appear when resizing widget
     availableHandles: ResizeHandle[];
     //starting dimensions
@@ -34,13 +34,6 @@ export interface WidgetConfig {
     maxH?: number;
     maxW?: number;
 }
-
-export interface WidgetComponentProps<Config extends WidgetConfig> {
-    //uniquely identifies the widget (should correspond to Widget.i)
-    id: number;
-    //the widget's config
-    config: Config;
-};
 
 export interface FormProps<T extends WidgetConfig> {
     //the current config
@@ -53,4 +46,13 @@ export interface WidgetType<ConfigType extends WidgetConfig> {
     Component: React.FC<WidgetComponentProps<ConfigType>>;
     Form: React.FC<FormProps<ConfigType>>;
     defaultConfig: ConfigType;
+    typeId: number;
 }
+
+export interface WidgetComponentProps<Config extends WidgetConfig> {
+    //uniquely identifies the widget (should correspond to Widget.i)
+    id: number;
+    //the widget's config
+    config: Config;
+};
+

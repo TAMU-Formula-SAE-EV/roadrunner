@@ -14,11 +14,11 @@ const renderMenuEntry = (entry: MenuEntry<any>, setMenuState: (state: MENU_STATE
             </div>
         );
     } else if (entry.widget !== undefined) {
-        const widgetPreset = entry.widget;
+        const {config, typeId} = entry.widget;
         return (
             <div>
-                <WidgetSpawner config={widgetPreset} onDragStart={onWidgetSpawn}>
-                    <MenuItem title={widgetPreset.title}></MenuItem>
+                <WidgetSpawner config={config} typeId={typeId} onDragStart={onWidgetSpawn}>
+                    <MenuItem title={config.title}></MenuItem>
                 </WidgetSpawner>
             </div>
         );

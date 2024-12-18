@@ -23,24 +23,24 @@ const layoutCollides = (layout: GridItem[], item: GridItem): boolean => {
 };
 
 const generatePreviewLayout = (
-  currentLayout: Widget[],
+  currentLayout: Widget<any>[],
   operation: GridOperationState, 
   hoverPosition: GridPosition,
-): { layout: Widget[]; preview: GridItem | null } => {
+): { layout: Widget<any>[]; preview: GridItem | null } => {
 
   console.log("getting preview layout")
 
   //get global widget layout (and remove the widget we are moving/resizing)
-  const layout = currentLayout.filter((w: Widget) => {return w.id !== operation.widget.id});
+  const layout = currentLayout.filter((w: Widget<any>) => {return w.id !== operation.widget.id});
 
   //get the preview assuming no collisions
   const naivePreview: GridItem = operation.operation === GRID_OPERATION.MOVE ? getNaiveDragPreview(operation, hoverPosition) : 
     getNaiveResizePreview(operation, hoverPosition);
 
   //if there are no collisions, return
-  const collides: Widget[] = [];
-  const noCollides: Widget[] = [];
-  layout.forEach((w: Widget) => {if (doesCollide(w, naivePreview)) collides.push(w); else noCollides.push(w)});
+  const collides: Widget<any>[] = [];
+  const noCollides: Widget<any>[] = [];
+  layout.forEach((w: Widget<any>) => {if (doesCollide(w, naivePreview)) collides.push(w); else noCollides.push(w)});
   if (collides.length === 0) {
     return {layout, preview: naivePreview};
   }
@@ -57,8 +57,8 @@ const generatePreviewLayout = (
   // - note: if the widget started out on the grid there should ALWAYS 
   //  be a backup spot for it. 
   
-  let updatedLayout: Widget[] = [...noCollides];
-  collides.forEach((c_widget: Widget) => {
+  let updatedLayout: Widget<any>[] = [...noCollides];
+  collides.forEach((c_widget: Widget<any>) => {
     for (let x = 0; x <= GRID_COLUMNS; x++) {
       for (let y = 0; y <= GRID_ROWS; y++) {
         if (!layoutCollides(updatedLayout, {...c_widget, x, y})) {

@@ -1,6 +1,5 @@
 import { useDrag } from "react-dnd";
-import { Widget as Widget_t, WidgetConfig } from "./types";
-import { getWidgetType } from "./utils/getWidgetType";
+import { ResizeHandle as ResizeHandle_t, Widget as Widget_t, WidgetConfig } from "./types";
 import ResizeHandle from "./utils/ResizeHandle";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +7,7 @@ import { faEllipsisVertical, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./styles.css";
 import { useWidgetLayout } from "../grid/GridContext";
 import { GRID_OPERATION } from "../grid/consts";
+import { widgetTypeRegistry } from "./widget_types/widgetTypeRegistery";
 
 /*
   Handles universal widget behavior: 
@@ -20,20 +20,20 @@ import { GRID_OPERATION } from "../grid/consts";
   - render widget contents
 */
 
-interface WidgetProps {
-  widget: Widget_t;
+interface WidgetProps<Config extends WidgetConfig>{
+  widget: Widget_t<Config>;
   selected?: boolean;
 }
 
-export const Widget: React.FC<WidgetProps> = ({
+export const Widget: React.FC<WidgetProps<any>> = ({
   widget,
   selected,
 }) => {
 
-  const { id, config } = widget;
+  const { id, config, typeId } = widget;
+  const WidgetType = widgetTypeRegistry[typeId];
   const { availableHandles } = config;
   const {editConfig, deleteWidget} = useWidgetLayout();
-  const WidgetType = getWidgetType(widget.config);
 
   const [formActive, setFormActive] = useState<boolean>(false);
 
@@ -98,12 +98,13 @@ export const Widget: React.FC<WidgetProps> = ({
 
       {/* Show handles and edit button when selected */}
       {selected &&
-        availableHandles.map((handle) => (
+        availableHandles.map((handle: ResizeHandle_t) => (
             <ResizeHandle
               key={`${widget.id}-${handle}`}
               id={widget.id}
               handle={handle}
               config={config}
+              typeId={typeId}
             />
         ))}
         

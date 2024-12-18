@@ -1,13 +1,13 @@
-import BasicDisplay, { BasicDisplayConfig } from "../../widgets/basic-display/BasicDisplay";
-import EmptyWidget from "../../widgets/empty-widget/EmptyWidget";
-import { RESIZE_HANDLES, WidgetConfig } from "../../widgets/types";
+import BasicDisplay, { BasicDisplayConfig } from "../../widgets/widget_types/basic-display/BasicDisplay";
+import EmptyWidget from "../../widgets/widget_types/empty-widget/EmptyWidget";
+import { RESIZE_HANDLES, WidgetConfig, WidgetType } from "../../widgets/types";
 import { WIDGET_TYPE } from "../../widgets/types";
 
 export enum MENU_STATE { DEFAULT, GRAPHS, DIALS }
 
 export interface MenuEntry<Config extends WidgetConfig> {
     redirect?: {icon: String, label: String, onClickState: MENU_STATE},
-    widget?: Config;
+    widget?: {config: Config, typeId: number};
 };
 export interface MenuContents<Config extends WidgetConfig> {contents: MenuEntry<Config>[]};
 
@@ -19,8 +19,8 @@ export const DEFAULT_MENU_CONTENTS: MenuContents<any> = {
 
 export const GRAPHS_CONTENTS: MenuContents<any> = {
     contents: [
-        {widget: BasicDisplay.defaultConfig},
-        {widget: EmptyWidget.defaultConfig}, 
+        {widget: {config: BasicDisplay.defaultConfig, typeId: BasicDisplay.typeId}},
+        {widget: {config: EmptyWidget.defaultConfig, typeId: EmptyWidget.typeId}}, 
     ]
 };
 

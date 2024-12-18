@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from "react";
-import { useData } from "../../data-provider/DataProvider";
-import { WidgetComponentProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../types";
-import { WIDGET_TYPE } from "../types";
-import { DATASTREAM, datastreams } from "../../shared-types";
+import { useData } from "../../../data-provider/DataProvider";
+import { WidgetComponentProps, WidgetConfig, FormProps, WidgetType, RESIZE_HANDLES } from "../../types";
+import { WIDGET_TYPE } from "../../types";
+import { DATASTREAM, datastreams } from "../../../shared-types";
 
 
 // define all the configurable options unique to this widget type
@@ -61,7 +61,8 @@ const defaultConfig = {
 const BasicDisplay: WidgetType<BasicDisplayConfig> = {
     Component: BasicDisplayComponent,
     Form: BasicDisplayForm,
-    defaultConfig
+    defaultConfig,
+    typeId: 0,
 }
 
 export default BasicDisplay;

@@ -1,5 +1,5 @@
 import { DropTargetMonitor } from "react-dnd";
-import { GridItem, ResizeHandle, Widget, WidgetConfig } from "../widgets/types";
+import { GridItem, ResizeHandle, Widget, WidgetConfig, WidgetType } from "../widgets/types";
 
 export const GRID_COLUMNS = 16;
 export const GRID_ROWS = 8;
@@ -16,9 +16,9 @@ export enum GRID_OPERATION { RESIZE, MOVE };
 
 export type GridOperationState = {
   //a temporary layout that complies with our new widget size/location
-  layout: Widget[];
+  layout: Widget<any>[];
   //the widget we are either dragging or resizing
-  widget: Widget;
+  widget: Widget<any>;
   //the visual projection of the widget onto the grid
   //(could be null if say, the grid is full and we are trying
   //to add a new widget)
@@ -33,7 +33,8 @@ export type GridOperationPayload<Config extends WidgetConfig> = {
   id?: number;
   config: Config;
   handle?: ResizeHandle;
-  operation: GRID_OPERATION
+  operation: GRID_OPERATION;
+  typeId: number;
 }
 
 

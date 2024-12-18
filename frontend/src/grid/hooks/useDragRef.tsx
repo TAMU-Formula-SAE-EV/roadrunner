@@ -25,27 +25,28 @@ const useDragRef: (gridOperation: GridOperationState | null, setGridOperation: (
         accept: ["WIDGET", "NEW_WIDGET", "RESIZE"],
         hover: (payload: GridOperationPayload<any>, monitor) => {
 
-        //if it's a new operation, need to update the operation state ...
+        //if it's a new operation, need to make the operation state ...
         if (!gridOperation) {
-            const { id, config, handle, operation } = payload;
+            const { id, config, handle, operation, typeId } = payload;
 
-            const widget_already_exists = layout.find((w: Widget) => {return w.id === id}) !== undefined;
-            const widget: Widget = layout.find((w: Widget) => {return w.id === id}) || 
-                {x: 0, y: 0, id: getNewId(), config, h: config.h, w: config.w}; 
+            const existingWidget = layout.find((w: Widget<any>) => w.id === id);
+            const widget: Widget<any> = existingWidget || 
+                {x: 0, y: 0, id: getNewId(), config, h: config.h, w: config.w, typeId};
 
             setGridOperation({
-                layout: layout.filter((w: Widget) => {return w.id !== widget.id}),
+                layout: layout.filter((w: Widget<any>) => w.id !== (existingWidget ? existingWidget.id : widget.id)),
                 widget,
-                preview: widget_already_exists ? widget as GridItem : null,
-                operation, 
+                preview: existingWidget ? existingWidget as GridItem : null,
+                operation,
                 handle
-            }); 
+            });
+
 
         }else{
             
             const updatedHoverPosition = getHoverPosition(monitor);
 
-            if (updatedHoverPosition !== hoverPosition.current && updatedHoverPosition !== undefined) {
+            if (updatedHoverPosition !== undefined && updatedHoverPosition !== hoverPosition.current) {
                 hoverPosition.current = updatedHoverPosition;
                 setGridOperation({
                     ...gridOperation, 
@@ -57,14 +58,19 @@ const useDragRef: (gridOperation: GridOperationState | null, setGridOperation: (
         },
         drop: (_, monitor) => {
             if (!gridOperation) throw new Error("attemped to drop resize/move while operation is null!!");
+            
             const currentHoverPosition = getHoverPosition(monitor);
             if (!currentHoverPosition) throw new Error("could not get drop position");
-            
+
             const previewLayout = generatePreviewLayout(layout, gridOperation, currentHoverPosition);
-            const newLayout = [...previewLayout.layout, {...gridOperation.widget, ...previewLayout.preview }]
+            
+            const newLayout = 
+                [...previewLayout.layout, {...gridOperation.widget, ...previewLayout.preview }];
             
             hoverPosition.current = null;
-            setLayout(newLayout);
+
+            //if the preview is null, return to the existing state
+            if (gridOperation.preview) setLayout(newLayout);
             setGridOperation(null);
         }, 
 

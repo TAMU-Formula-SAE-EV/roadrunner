@@ -1,5 +1,5 @@
 import React from "react";
-import { FormProps, RESIZE_HANDLES, WIDGET_TYPE, WidgetConfig, WidgetComponentProps, WidgetType } from "../types";
+import { FormProps, RESIZE_HANDLES, WIDGET_TYPE, WidgetConfig, WidgetComponentProps, WidgetType } from "../../types";
 
 //defines all the additional configuration settings for the widget
 export interface EmptyWidgetConfig extends WidgetConfig {
@@ -45,7 +45,8 @@ const defaultConfig = {
 const EmptyWidget: WidgetType<EmptyWidgetConfig> = {
     Component: EmptyWidgetComponent, 
     Form: EmptyWidgetForm,
-    defaultConfig
+    defaultConfig,
+    typeId: 1
 };
 
 export default EmptyWidget;
